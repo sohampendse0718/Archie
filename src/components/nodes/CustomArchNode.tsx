@@ -5,9 +5,11 @@ import { cn } from '@/lib/utils';
 
 export type ArchNodeData = {
   label: string;
-  category: 'frontend' | 'backend' | 'ai' | 'database';
+  category: string; 
   description: string;
-  icon: string;
+  icon?: string;
+  purpose?: string;
+  bottleneckRisk?: string;
 };
 
 const iconMap: Record<string, LucideIcon> = {
@@ -18,11 +20,12 @@ const iconMap: Record<string, LucideIcon> = {
   Sparkles,
 };
 
-const categoryStyles = {
+const categoryStyles: Record<string, string> = {
   frontend: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
   backend: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
   ai: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
   database: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+  infrastructure: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
 };
 
 const handleStyle = {
@@ -33,12 +36,19 @@ const handleStyle = {
   transition: 'all 0.2s',
 };
 
-function CustomArchNode({ data }: { data: ArchNodeData }) {
-  const Icon = iconMap[data.icon] || Server;
+function CustomArchNode({ data, selected }: { data: ArchNodeData; selected?: boolean }) {
+  const Icon = (data.icon && iconMap[data.icon]) || Server;
   const catStyle = categoryStyles[data.category] || categoryStyles.backend;
 
   return (
-    <div className="group relative w-[300px] bg-zinc-900/80 border border-zinc-800 backdrop-blur-md rounded-xl p-4 shadow-xl hover:border-zinc-600 transition-all duration-300 hover:shadow-zinc-500/10 hover:shadow-2xl">
+    <div
+      className={cn(
+        "group relative w-[300px] bg-zinc-900/90 border backdrop-blur-md rounded-xl p-4 shadow-xl transition-all duration-200",
+        selected
+          ? "border-blue-500 ring-2 ring-blue-500/40 shadow-[0_0_25px_rgba(59,130,246,0.35)] scale-[1.02]"
+          : "border-zinc-800 hover:border-zinc-600 hover:shadow-2xl hover:shadow-zinc-500/10"
+      )}
+    >
       <Handle 
         type="target" 
         position={Position.Top} 
@@ -47,7 +57,7 @@ function CustomArchNode({ data }: { data: ArchNodeData }) {
       />
       <Handle 
         type="target" 
-        id="left"
+        id="left" 
         position={Position.Left} 
         style={handleStyle} 
         className="hover:!border-zinc-300 hover:!bg-zinc-100 hover:shadow-[0_0_12px_rgba(255,255,255,0.6)]"
@@ -78,14 +88,14 @@ function CustomArchNode({ data }: { data: ArchNodeData }) {
       <Handle 
         type="source" 
         position={Position.Bottom} 
-        style={handleStyle}
+        style={handleStyle} 
         className="hover:!border-zinc-300 hover:!bg-zinc-100 hover:shadow-[0_0_12px_rgba(255,255,255,0.6)]"
       />
       <Handle 
         type="source" 
-        id="right"
+        id="right" 
         position={Position.Right} 
-        style={handleStyle}
+        style={handleStyle} 
         className="hover:!border-zinc-300 hover:!bg-zinc-100 hover:shadow-[0_0_12px_rgba(255,255,255,0.6)]"
       />
     </div>

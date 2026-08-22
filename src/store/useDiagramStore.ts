@@ -25,17 +25,20 @@ const initialEdges: Edge[] = [];
 type DiagramState = {
   nodes: ArchNode[];
   edges: Edge[];
+  selectedNode: ArchNode | null;
   onNodesChange: OnNodesChange<ArchNode>;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
   setNodes: (nodes: ArchNode[]) => void;
   setEdges: (edges: Edge[]) => void;
+  setSelectedNode: (node: ArchNode | null) => void;
   applyAutoLayout: (direction?: string) => void;
 };
 
 export const useDiagramStore = create<DiagramState>((set, get) => ({
   nodes: initialNodes,
   edges: initialEdges,
+  selectedNode: null,
   onNodesChange: (changes: NodeChange<ArchNode>[]) => {
     set({
       nodes: applyNodeChanges(changes, get().nodes),
@@ -61,6 +64,7 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
   },
   setNodes: (nodes: ArchNode[]) => set({ nodes }),
   setEdges: (edges: Edge[]) => set({ edges }),
+  setSelectedNode: (node: ArchNode | null) => set({ selectedNode: node }),
   applyAutoLayout: (direction = 'TB') => {
     const { nodes, edges } = getLayoutedElements(get().nodes, get().edges, direction);
     set({ nodes, edges });

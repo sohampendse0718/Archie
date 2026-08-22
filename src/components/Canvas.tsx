@@ -10,26 +10,25 @@ import {
   ReactFlowProvider,
   useReactFlow,
 } from '@xyflow/react';
-import { useDiagramStore } from '@/store/useDiagramStore';
+import { useDiagramStore, ArchNode } from '@/store/useDiagramStore';
 import { nodeTypes } from './nodes';
 
 const defaultEdgeOptions = {
   type: 'smoothstep',
   animated: true,
   style: {
-    stroke: '#8b5cf6', // Indigo/purple stroke
+    stroke: '#8b5cf6',
     strokeWidth: 2,
     filter: 'drop-shadow(0 0 5px rgba(139, 92, 246, 0.6))',
   },
 };
 
 function CanvasInner() {
-  const { nodes, edges, onNodesChange, onEdgesChange, onConnect } = useDiagramStore();
+  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, setSelectedNode } = useDiagramStore();
   const { zoomIn, zoomOut, fitView } = useReactFlow();
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Intercept Global Zoom Shortcuts
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey) {
         if (e.key === '=' || e.key === '+') {
@@ -45,7 +44,6 @@ function CanvasInner() {
       }
     };
 
-    // Intercept Trackpad Pinch / Ctrl + Wheel
     const handleWheel = (e: WheelEvent) => {
       if (e.ctrlKey) {
         e.preventDefault();
@@ -54,7 +52,6 @@ function CanvasInner() {
 
     window.addEventListener('keydown', handleKeyDown, { passive: false });
     
-    // Non-passive event listener on the canvas container specifically
     const container = containerRef.current;
     if (container) {
       container.addEventListener('wheel', handleWheel, { passive: false });
@@ -76,6 +73,8 @@ function CanvasInner() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onNodeClick={(_, node) => setSelectedNode(node as ArchNode)}
+        onPaneClick={() => setSelectedNode(null)}
         nodeTypes={nodeTypes}
         defaultEdgeOptions={defaultEdgeOptions}
         minZoom={0.1}
@@ -92,19 +91,17 @@ function CanvasInner() {
           color="#27272a" 
         />
         
-        {/* Customized Dark Glassmorphic Controls */}
         <Controls 
           className="!bg-zinc-900/80 !border-zinc-800 !shadow-xl backdrop-blur-md !rounded-xl !overflow-hidden [&>button]:!bg-transparent [&>button]:!border-zinc-800/50 [&>button]:!border-b [&>button]:last:!border-b-0 [&>button]:!text-zinc-400 hover:[&>button]:!text-zinc-100 hover:[&>button]:!bg-zinc-800/50 [&>button]:!transition-colors"
           showInteractive={false}
           position="bottom-left"
         />
         
-        {/* Customized MiniMap */}
         <MiniMap 
           className="!bg-zinc-900/90 !border !border-zinc-800 !shadow-2xl backdrop-blur-xl !rounded-xl !overflow-hidden"
           nodeColor={(n) => {
             if (n.type === 'customArch') {
-              const cat = n.data?.category;
+              const cat = (n.data as { category?: string })?.category;
               if (cat === 'frontend') return '#3b82f6';
               if (cat === 'backend') return '#10b981';
               if (cat === 'ai') return '#a855f7';

@@ -2,6 +2,7 @@
 
 import Canvas from '@/components/Canvas';
 import CommandBar from '@/components/CommandBar';
+import InspectorPanel from '@/components/InspectorPanel';
 import { Save, Download, Sparkles, Layout } from 'lucide-react';
 import { useDiagramStore } from '@/store/useDiagramStore';
 
@@ -57,6 +58,7 @@ export default function Home() {
       <main className="flex-1 w-full relative">
         <Canvas />
         <CommandBar />
+        <InspectorPanel />
       </main>
     </div>
   );
