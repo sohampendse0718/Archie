@@ -41,8 +41,30 @@ export default function CommandBar() {
 
       const data = await response.json();
       
-      useDiagramStore.getState().setNodes(data.nodes);
-      useDiagramStore.getState().setEdges(data.edges);
+      const reactFlowNodes = data.nodes.map((node: any) => ({
+        id: node.id,
+        type: 'customArch',
+        position: { x: 0, y: 0 },
+        data: {
+          label: node.label,
+          category: node.category,
+          description: node.description,
+          icon: node.icon,
+          purpose: node.purpose,
+          bottleneckRisk: node.bottleneckRisk,
+        },
+      }));
+
+      const reactFlowEdges = data.edges.map((edge: any) => ({
+        id: edge.id,
+        source: edge.source,
+        target: edge.target,
+        animated: edge.animated !== undefined ? edge.animated : true,
+        label: edge.label,
+      }));
+      
+      useDiagramStore.getState().setNodes(reactFlowNodes);
+      useDiagramStore.getState().setEdges(reactFlowEdges);
       useDiagramStore.getState().setArchitectureScore(data.architectureScore);
       useDiagramStore.getState().setScoreReasoning(data.scoreReasoning);
       useDiagramStore.getState().applyAutoLayout('TB');
