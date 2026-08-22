@@ -1,8 +1,13 @@
+"use client";
+
 import Canvas from '@/components/Canvas';
 import CommandBar from '@/components/CommandBar';
-import { Save, Download, Sparkles } from 'lucide-react';
+import { Save, Download, Sparkles, Layout } from 'lucide-react';
+import { useDiagramStore } from '@/store/useDiagramStore';
 
 export default function Home() {
+  const applyAutoLayout = useDiagramStore((state) => state.applyAutoLayout);
+
   return (
     <div className="flex flex-col h-screen w-full bg-[#09090b] overflow-hidden">
       {/* Floating Topbar / Header */}
@@ -23,6 +28,14 @@ export default function Home() {
 
         {/* Actions Area */}
         <div className="flex items-center gap-3">
+          <button 
+            onClick={() => applyAutoLayout('TB')}
+            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-zinc-300 bg-zinc-800/40 hover:bg-zinc-800 hover:text-zinc-100 rounded-lg border border-zinc-700/50 transition-colors shadow-sm"
+          >
+            <Layout className="w-4 h-4" />
+            Auto Layout
+          </button>
+          
           <button className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-zinc-300 bg-zinc-800/40 hover:bg-zinc-800 hover:text-zinc-100 rounded-lg border border-zinc-700/50 transition-colors shadow-sm">
             <Download className="w-4 h-4" />
             Export

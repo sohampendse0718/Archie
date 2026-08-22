@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { getLayoutedElements } from '@/lib/layoutUtils';
 import {
   Connection,
   Edge,
@@ -109,6 +110,7 @@ type DiagramState = {
   onConnect: OnConnect;
   setNodes: (nodes: ArchNode[]) => void;
   setEdges: (edges: Edge[]) => void;
+  applyAutoLayout: (direction?: string) => void;
 };
 
 export const useDiagramStore = create<DiagramState>((set, get) => ({
@@ -139,4 +141,8 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
   },
   setNodes: (nodes: ArchNode[]) => set({ nodes }),
   setEdges: (edges: Edge[]) => set({ edges }),
+  applyAutoLayout: (direction = 'TB') => {
+    const { nodes, edges } = getLayoutedElements(get().nodes, get().edges, direction);
+    set({ nodes, edges });
+  },
 }));
