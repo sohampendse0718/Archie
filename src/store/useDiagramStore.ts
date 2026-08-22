@@ -26,12 +26,16 @@ type DiagramState = {
   nodes: ArchNode[];
   edges: Edge[];
   selectedNode: ArchNode | null;
+  architectureScore: number | null;
+  scoreReasoning: string | null;
   onNodesChange: OnNodesChange<ArchNode>;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
   setNodes: (nodes: ArchNode[]) => void;
   setEdges: (edges: Edge[]) => void;
   setSelectedNode: (node: ArchNode | null) => void;
+  setArchitectureScore: (score: number | null) => void;
+  setScoreReasoning: (reasoning: string | null) => void;
   applyAutoLayout: (direction?: string) => void;
 };
 
@@ -39,6 +43,8 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
   nodes: initialNodes,
   edges: initialEdges,
   selectedNode: null,
+  architectureScore: null,
+  scoreReasoning: null,
   onNodesChange: (changes: NodeChange<ArchNode>[]) => {
     set({
       nodes: applyNodeChanges(changes, get().nodes),
@@ -65,6 +71,8 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
   setNodes: (nodes: ArchNode[]) => set({ nodes }),
   setEdges: (edges: Edge[]) => set({ edges }),
   setSelectedNode: (node: ArchNode | null) => set({ selectedNode: node }),
+  setArchitectureScore: (score: number | null) => set({ architectureScore: score }),
+  setScoreReasoning: (reasoning: string | null) => set({ scoreReasoning: reasoning }),
   applyAutoLayout: (direction = 'TB') => {
     const { nodes, edges } = getLayoutedElements(get().nodes, get().edges, direction);
     set({ nodes, edges });

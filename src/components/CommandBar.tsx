@@ -26,6 +26,8 @@ export default function CommandBar() {
     if (!inputValue.trim() || isGenerating) return;
 
     setIsGenerating(true);
+    useDiagramStore.getState().setArchitectureScore(null);
+    useDiagramStore.getState().setScoreReasoning(null);
     try {
       const response = await fetch('/api/generate', {
         method: 'POST',
@@ -41,6 +43,8 @@ export default function CommandBar() {
       
       useDiagramStore.getState().setNodes(data.nodes);
       useDiagramStore.getState().setEdges(data.edges);
+      useDiagramStore.getState().setArchitectureScore(data.architectureScore);
+      useDiagramStore.getState().setScoreReasoning(data.scoreReasoning);
       useDiagramStore.getState().applyAutoLayout('TB');
       
       setInputValue('');

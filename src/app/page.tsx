@@ -3,11 +3,23 @@
 import Canvas from '@/components/Canvas';
 import CommandBar from '@/components/CommandBar';
 import InspectorPanel from '@/components/InspectorPanel';
-import { Save, Download, Sparkles, Layout } from 'lucide-react';
+import { Save, Download, Sparkles, Layout, Activity } from 'lucide-react';
 import { useDiagramStore } from '@/store/useDiagramStore';
 
 export default function Home() {
   const applyAutoLayout = useDiagramStore((state) => state.applyAutoLayout);
+  const architectureScore = useDiagramStore((state) => state.architectureScore);
+
+  let scoreColor = 'text-zinc-400 border-zinc-700 bg-zinc-800/40';
+  if (architectureScore !== null) {
+    if (architectureScore >= 90) {
+      scoreColor = 'text-green-400 border-green-500/30 bg-green-500/10 shadow-[0_0_10px_rgba(34,197,94,0.2)]';
+    } else if (architectureScore >= 75) {
+      scoreColor = 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10 shadow-[0_0_10px_rgba(234,179,8,0.2)]';
+    } else {
+      scoreColor = 'text-red-400 border-red-500/30 bg-red-500/10 shadow-[0_0_10px_rgba(239,68,68,0.2)]';
+    }
+  }
 
   return (
     <div className="flex flex-col h-screen w-full bg-[#09090b] overflow-hidden">
@@ -47,10 +59,12 @@ export default function Home() {
             Save
           </button>
 
-          <button className="flex items-center gap-2 px-4 py-1.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg shadow-[0_0_15px_rgba(79,70,229,0.4)] hover:shadow-[0_0_20px_rgba(79,70,229,0.6)] transition-all ml-2 border border-indigo-500/50">
-            <Sparkles className="w-4 h-4" />
-            Generate Architecture
-          </button>
+          {architectureScore !== null && (
+            <div className={`flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-lg border transition-all ml-2 ${scoreColor}`}>
+              <Activity className="w-4 h-4" />
+              Health: {architectureScore} / 100
+            </div>
+          )}
         </div>
       </header>
 
