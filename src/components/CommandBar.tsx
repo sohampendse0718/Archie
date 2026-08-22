@@ -28,6 +28,7 @@ export default function CommandBar() {
     setIsGenerating(true);
     useDiagramStore.getState().setArchitectureScore(null);
     useDiagramStore.getState().setScoreReasoning(null);
+    useDiagramStore.getState().setAnalysisDetails({ strengths: [], weaknesses: [], tradeoffs: [] });
     try {
       const response = await fetch('/api/generate', {
         method: 'POST',
@@ -67,6 +68,11 @@ export default function CommandBar() {
       useDiagramStore.getState().setEdges(reactFlowEdges);
       useDiagramStore.getState().setArchitectureScore(data.architectureScore);
       useDiagramStore.getState().setScoreReasoning(data.scoreReasoning);
+      useDiagramStore.getState().setAnalysisDetails({
+        strengths: data.strengths,
+        weaknesses: data.weaknesses,
+        tradeoffs: data.tradeoffs,
+      });
       useDiagramStore.getState().applyAutoLayout('TB');
       
       setInputValue('');

@@ -28,6 +28,10 @@ type DiagramState = {
   selectedNode: ArchNode | null;
   architectureScore: number | null;
   scoreReasoning: string | null;
+  strengths: string[];
+  weaknesses: string[];
+  tradeoffs: string[];
+  isScoreModalOpen: boolean;
   onNodesChange: OnNodesChange<ArchNode>;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
@@ -36,6 +40,8 @@ type DiagramState = {
   setSelectedNode: (node: ArchNode | null) => void;
   setArchitectureScore: (score: number | null) => void;
   setScoreReasoning: (reasoning: string | null) => void;
+  setAnalysisDetails: (details: { strengths?: string[]; weaknesses?: string[]; tradeoffs?: string[] }) => void;
+  setIsScoreModalOpen: (open: boolean) => void;
   applyAutoLayout: (direction?: string) => void;
 };
 
@@ -45,6 +51,10 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
   selectedNode: null,
   architectureScore: null,
   scoreReasoning: null,
+  strengths: [],
+  weaknesses: [],
+  tradeoffs: [],
+  isScoreModalOpen: false,
   onNodesChange: (changes: NodeChange<ArchNode>[]) => {
     set({
       nodes: applyNodeChanges(changes, get().nodes),
@@ -73,6 +83,12 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
   setSelectedNode: (node: ArchNode | null) => set({ selectedNode: node }),
   setArchitectureScore: (score: number | null) => set({ architectureScore: score }),
   setScoreReasoning: (reasoning: string | null) => set({ scoreReasoning: reasoning }),
+  setAnalysisDetails: (details) => set((state) => ({ 
+    strengths: details.strengths || state.strengths,
+    weaknesses: details.weaknesses || state.weaknesses,
+    tradeoffs: details.tradeoffs || state.tradeoffs
+  })),
+  setIsScoreModalOpen: (open: boolean) => set({ isScoreModalOpen: open }),
   applyAutoLayout: (direction = 'TB') => {
     const { nodes, edges } = getLayoutedElements(get().nodes, get().edges, direction);
     set({ nodes, edges });

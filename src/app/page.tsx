@@ -3,12 +3,14 @@
 import Canvas from '@/components/Canvas';
 import CommandBar from '@/components/CommandBar';
 import InspectorPanel from '@/components/InspectorPanel';
+import ScoreBreakdownModal from '@/components/ScoreBreakdownModal';
 import { Save, Download, Sparkles, Layout, Activity } from 'lucide-react';
 import { useDiagramStore } from '@/store/useDiagramStore';
 
 export default function Home() {
   const applyAutoLayout = useDiagramStore((state) => state.applyAutoLayout);
   const architectureScore = useDiagramStore((state) => state.architectureScore);
+  const setIsScoreModalOpen = useDiagramStore((state) => state.setIsScoreModalOpen);
 
   let scoreColor = 'text-zinc-400 border-zinc-700 bg-zinc-800/40';
   if (architectureScore !== null) {
@@ -60,7 +62,10 @@ export default function Home() {
           </button>
 
           {architectureScore !== null && (
-            <div className={`flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-lg border transition-all ml-2 ${scoreColor}`}>
+            <div 
+              onClick={() => setIsScoreModalOpen(true)}
+              className={`flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-lg border cursor-pointer hover:scale-105 active:scale-95 transition-all ml-2 ${scoreColor}`}
+            >
               <Activity className="w-4 h-4" />
               Health: {architectureScore} / 100
             </div>
@@ -73,6 +78,7 @@ export default function Home() {
         <Canvas />
         <CommandBar />
         <InspectorPanel />
+        <ScoreBreakdownModal />
       </main>
     </div>
   );
