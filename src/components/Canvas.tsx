@@ -24,9 +24,25 @@ const defaultEdgeOptions = {
 };
 
 function CanvasInner() {
-  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, setSelectedNode } = useDiagramStore();
+  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, setSelectedNode, failedNodes, degradedNodes } = useDiagramStore();
   const { zoomIn, zoomOut, fitView } = useReactFlow();
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const styledEdges = edges.map(edge => {
+    if (failedNodes.includes(edge.target)) {
+      return {
+        ...edge,
+        animated: false,
+        style: { ...edge.style, stroke: '#ef4444', filter: 'drop-shadow(0 0 5px rgba(239, 68, 68, 0.6))' }
+      };
+    } else if (degradedNodes.includes(edge.target)) {
+      return {
+        ...edge,
+        style: { ...edge.style, stroke: '#f59e0b', filter: 'drop-shadow(0 0 5px rgba(245, 158, 11, 0.6))' }
+      };
+    }
+    return edge;
+  });
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -69,7 +85,7 @@ function CanvasInner() {
     <div ref={containerRef} className="w-full h-full relative z-0">
       <ReactFlow
         nodes={nodes}
-        edges={edges}
+        edges={styledEdges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}

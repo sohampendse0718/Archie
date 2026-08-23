@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { Layout, Server, Bot, Database, Sparkles, type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useDiagramStore } from '@/store/useDiagramStore';
 
 export type ArchNodeData = {
   label: string;
@@ -36,7 +37,13 @@ const handleStyle = {
   transition: 'all 0.2s',
 };
 
-function CustomArchNode({ data, selected }: { data: ArchNodeData; selected?: boolean }) {
+function CustomArchNode({ id, data, selected }: { id: string; data: ArchNodeData; selected?: boolean }) {
+  const failedNodes = useDiagramStore(state => state.failedNodes);
+  const degradedNodes = useDiagramStore(state => state.degradedNodes);
+  
+  const isFailed = failedNodes.includes(id);
+  const isDegraded = degradedNodes.includes(id);
+
   const Icon = (data.icon && iconMap[data.icon]) || Server;
   const catStyle = categoryStyles[data.category] || categoryStyles.backend;
 
@@ -44,7 +51,11 @@ function CustomArchNode({ data, selected }: { data: ArchNodeData; selected?: boo
     <div
       className={cn(
         "group relative w-[300px] bg-zinc-900/90 border backdrop-blur-md rounded-xl p-4 shadow-xl transition-all duration-200",
-        selected
+        isFailed 
+          ? "border-2 border-red-500/80 shadow-[0_0_20px_rgba(239,68,68,0.5)] animate-[pulse_2s_ease-in-out_infinite]" 
+          : isDegraded 
+          ? "border-2 border-amber-500/80 shadow-[0_0_15px_rgba(245,158,11,0.4)]"
+          : selected
           ? "border-blue-500 ring-2 ring-blue-500/40 shadow-[0_0_25px_rgba(59,130,246,0.35)] scale-[1.02]"
           : "border-zinc-800 hover:border-zinc-600 hover:shadow-2xl hover:shadow-zinc-500/10"
       )}
@@ -79,10 +90,22 @@ function CustomArchNode({ data, selected }: { data: ArchNodeData; selected?: boo
         <span className="text-[10px] font-bold tracking-widest uppercase text-zinc-500">
           {data.category}
         </span>
-        <div className="flex items-center gap-2 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-          <span className="text-[10px] font-medium text-emerald-400 tracking-wide">Active</span>
-        </div>
+        {isFailed ? (
+          <div className="flex items-center gap-2 bg-red-500/10 px-2.5 py-1 rounded-full border border-red-500/20">
+            <div className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]" />
+            <span className="text-[10px] font-medium text-red-500 tracking-wide">Offline</span>
+          </div>
+        ) : isDegraded ? (
+          <div className="flex items-center gap-2 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">
+            <div className="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)]" />
+            <span className="text-[10px] font-medium text-amber-500 tracking-wide">Degraded</span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+            <span className="text-[10px] font-medium text-emerald-400 tracking-wide">Active</span>
+          </div>
+        )}
       </div>
 
       <Handle 

@@ -1,13 +1,17 @@
 "use client";
 
 import { useDiagramStore } from '@/store/useDiagramStore';
-import { X } from 'lucide-react';
+import { X, AlertTriangle } from 'lucide-react';
 
 export default function InspectorPanel() {
   const selectedNode = useDiagramStore(state => state.selectedNode);
   const setSelectedNode = useDiagramStore(state => state.setSelectedNode);
+  const failedNodes = useDiagramStore(state => state.failedNodes);
+  const toggleNodeOutage = useDiagramStore(state => state.toggleNodeOutage);
 
   if (!selectedNode) return null;
+
+  const isFailed = failedNodes.includes(selectedNode.id);
 
   return (
     <div className="absolute right-4 top-20 w-80 bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-xl shadow-2xl z-20 flex flex-col overflow-hidden text-sm">
@@ -49,6 +53,20 @@ export default function InspectorPanel() {
             </p>
           </div>
         )}
+      </div>
+
+      <div className="p-4 border-t border-zinc-800/60 bg-zinc-800/30">
+        <button
+          onClick={() => toggleNodeOutage(selectedNode.id)}
+          className={`w-full py-2.5 px-4 rounded-lg font-medium flex items-center justify-center gap-2 transition-all duration-200 ${
+            isFailed
+              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20'
+              : 'bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 hover:shadow-[0_0_15px_rgba(244,63,94,0.15)]'
+          }`}
+        >
+          {!isFailed && <AlertTriangle className="w-4 h-4" />}
+          {isFailed ? 'Restore Service' : 'Simulate Outage'}
+        </button>
       </div>
     </div>
   );

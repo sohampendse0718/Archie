@@ -43,6 +43,9 @@ type DiagramState = {
   setAnalysisDetails: (details: { strengths?: string[]; weaknesses?: string[]; tradeoffs?: string[] }) => void;
   setIsScoreModalOpen: (open: boolean) => void;
   applyAutoLayout: (direction?: string) => void;
+  failedNodes: string[];
+  degradedNodes: string[];
+  toggleNodeOutage: (nodeId: string) => void;
 };
 
 export const useDiagramStore = create<DiagramState>((set, get) => ({
@@ -55,6 +58,8 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
   weaknesses: [],
   tradeoffs: [],
   isScoreModalOpen: false,
+  failedNodes: [],
+  degradedNodes: [],
   onNodesChange: (changes: NodeChange<ArchNode>[]) => {
     set({
       nodes: applyNodeChanges(changes, get().nodes),
@@ -93,4 +98,34 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
     const { nodes, edges } = getLayoutedElements(get().nodes, get().edges, direction);
     set({ nodes, edges });
   },
+  toggleNodeOutage: (nodeId: string) => set((state) => {
+    const isFailed = state.failedNodes.includes(nodeId);
+    let newFailedNodes: string[];
+    
+    if (isFailed) {
+      newFailedNodes = state.failedNodes.filter(id => id !== nodeId);
+    } else {
+      newFailedNodes = [...state.failedNodes, nodeId];
+    }
+
+    // Recalculate degraded nodes (Blast Radius)
+    const newDegradedNodes = new Set<string>();
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const edge of state.edges) {
+        if (newFailedNodes.includes(edge.target) || newDegradedNodes.has(edge.target)) {
+          if (!newFailedNodes.includes(edge.source) && !newDegradedNodes.has(edge.source)) {
+            newDegradedNodes.add(edge.source);
+            changed = true;
+          }
+        }
+      }
+    }
+
+    return {
+      failedNodes: newFailedNodes,
+      degradedNodes: Array.from(newDegradedNodes),
+    };
+  }),
 }));
