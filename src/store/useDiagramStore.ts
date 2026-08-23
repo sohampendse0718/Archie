@@ -42,6 +42,8 @@ type DiagramState = {
   setScoreReasoning: (reasoning: string | null) => void;
   setAnalysisDetails: (details: { strengths?: string[]; weaknesses?: string[]; tradeoffs?: string[] }) => void;
   setIsScoreModalOpen: (open: boolean) => void;
+  isExportModalOpen: boolean;
+  setIsExportModalOpen: (open: boolean) => void;
   applyAutoLayout: (direction?: string) => void;
   failedNodes: string[];
   degradedNodes: string[];
@@ -58,6 +60,7 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
   weaknesses: [],
   tradeoffs: [],
   isScoreModalOpen: false,
+  isExportModalOpen: false,
   failedNodes: [],
   degradedNodes: [],
   onNodesChange: (changes: NodeChange<ArchNode>[]) => {
@@ -94,6 +97,7 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
     tradeoffs: details.tradeoffs || state.tradeoffs
   })),
   setIsScoreModalOpen: (open: boolean) => set({ isScoreModalOpen: open }),
+  setIsExportModalOpen: (open: boolean) => set({ isExportModalOpen: open }),
   applyAutoLayout: (direction = 'TB') => {
     const { nodes, edges } = getLayoutedElements(get().nodes, get().edges, direction);
     set({ nodes, edges });

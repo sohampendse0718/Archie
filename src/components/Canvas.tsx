@@ -12,6 +12,7 @@ import {
 } from '@xyflow/react';
 import { useDiagramStore, ArchNode } from '@/store/useDiagramStore';
 import { nodeTypes } from './nodes';
+import ExportModal from '@/components/ExportModal';
 
 const defaultEdgeOptions = {
   type: 'smoothstep',
@@ -29,19 +30,35 @@ function CanvasInner() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const styledEdges = edges.map(edge => {
+    let newEdge = { ...edge };
+    let isAnimated = edge.animated !== false; // true by default
+
     if (failedNodes.includes(edge.target)) {
-      return {
-        ...edge,
+      newEdge = {
+        ...newEdge,
         animated: false,
-        style: { ...edge.style, stroke: '#ef4444', filter: 'drop-shadow(0 0 5px rgba(239, 68, 68, 0.6))' }
+        style: { ...newEdge.style, stroke: '#ef4444', filter: 'drop-shadow(0 0 5px rgba(239, 68, 68, 0.6))' }
       };
+      isAnimated = false;
     } else if (degradedNodes.includes(edge.target)) {
-      return {
-        ...edge,
-        style: { ...edge.style, stroke: '#f59e0b', filter: 'drop-shadow(0 0 5px rgba(245, 158, 11, 0.6))' }
+      newEdge = {
+        ...newEdge,
+        style: { ...newEdge.style, stroke: '#f59e0b', filter: 'drop-shadow(0 0 5px rgba(245, 158, 11, 0.6))' }
       };
     }
-    return edge;
+    
+    return {
+      ...newEdge,
+      style: {
+        stroke: '#a855f7', // Default purple fallback
+        ...newEdge.style,  // Preserves red/amber if set above
+        strokeWidth: 2,
+        ...(isAnimated ? { strokeDasharray: '6,6' } : {})
+      },
+      labelStyle: { fill: '#a1a1aa', fontWeight: 600 },
+      labelBgStyle: { fill: '#09090b', fillOpacity: 1 },
+      labelBgBorderRadius: 0
+    };
   });
 
   useEffect(() => {
@@ -137,6 +154,7 @@ export default function Canvas() {
   return (
     <ReactFlowProvider>
       <CanvasInner />
+      <ExportModal />
     </ReactFlowProvider>
   );
 }

@@ -11,6 +11,7 @@ export default function Home() {
   const applyAutoLayout = useDiagramStore((state) => state.applyAutoLayout);
   const architectureScore = useDiagramStore((state) => state.architectureScore);
   const setIsScoreModalOpen = useDiagramStore((state) => state.setIsScoreModalOpen);
+  const setIsExportModalOpen = useDiagramStore((state) => state.setIsExportModalOpen);
 
   let scoreColor = 'text-zinc-400 border-zinc-700 bg-zinc-800/40';
   if (architectureScore !== null) {
@@ -51,7 +52,10 @@ export default function Home() {
             Auto Layout
           </button>
           
-          <button className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-zinc-300 bg-zinc-800/40 hover:bg-zinc-800 hover:text-zinc-100 rounded-lg border border-zinc-700/50 transition-colors shadow-sm">
+          <button 
+            onClick={() => setIsExportModalOpen(true)}
+            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-zinc-300 bg-zinc-800/40 hover:bg-zinc-800 hover:text-zinc-100 rounded-lg border border-zinc-700/50 transition-colors shadow-sm"
+          >
             <Download className="w-4 h-4" />
             Export
           </button>

@@ -26,7 +26,7 @@ export const ArchitectureEdgeSchema = z.object({
   target: z.string(),
   label: z.string().optional().describe("Protocol or action, e.g., 'gRPC', 'HTTPS', 'Pub/Sub'"),
   animated: z.boolean().describe("True for dynamic/streaming/async events; False for direct synchronous links"),
-});
+}).describe("Do not create multiple edges between the exact same source and target nodes. If multiple protocols or data flows exist between two nodes, combine them into a single edge and combine the labels (e.g., 'HTTPS & WSS').");
 
 export const ArchitectureResponseSchema = z.object({
   architectureScore: z.number().min(0).max(100).describe("Overall system design score from 0 to 100"),
