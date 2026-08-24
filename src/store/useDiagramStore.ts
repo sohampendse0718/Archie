@@ -54,6 +54,7 @@ type DiagramState = {
   setCurrentArchitectureTitle: (title: string) => void;
   resetDiagram: () => void;
   updateNodeData: (id: string, data: Partial<ArchNodeData>) => void;
+  deleteNode: (nodeId: string) => void;
 };
 
 export const useDiagramStore = create<DiagramState>((set, get) => ({
@@ -135,6 +136,16 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
     return {
       nodes: updatedNodes,
       selectedNode: updatedSelectedNode,
+    };
+  }),
+  deleteNode: (nodeId) => set((state) => {
+    const newNodes = state.nodes.filter(n => n.id !== nodeId);
+    const newEdges = state.edges.filter(e => e.source !== nodeId && e.target !== nodeId);
+    
+    return {
+      nodes: newNodes,
+      edges: newEdges,
+      selectedNode: state.selectedNode?.id === nodeId ? null : state.selectedNode,
     };
   }),
   applyAutoLayout: (direction = 'TB') => {

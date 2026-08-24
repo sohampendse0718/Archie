@@ -1,7 +1,7 @@
 "use client";
 
 import { useDiagramStore } from '@/store/useDiagramStore';
-import { X, AlertTriangle, Edit2, Sparkles, Check, Loader2 } from 'lucide-react';
+import { X, AlertTriangle, Edit2, Sparkles, Check, Loader2, Trash2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function InspectorPanel() {
@@ -10,6 +10,7 @@ export default function InspectorPanel() {
   const failedNodes = useDiagramStore(state => state.failedNodes);
   const toggleNodeOutage = useDiagramStore(state => state.toggleNodeOutage);
   const updateNodeData = useDiagramStore(state => state.updateNodeData);
+  const deleteNode = useDiagramStore(state => state.deleteNode);
   
   const nodes = useDiagramStore(state => state.nodes);
   const edges = useDiagramStore(state => state.edges);
@@ -216,6 +217,13 @@ export default function InspectorPanel() {
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 AI Fix
+              </button>
+              <button
+                onClick={() => deleteNode(selectedNode.id)}
+                className="flex items-center justify-center py-2 px-3 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 hover:border-rose-500/45 rounded-lg text-rose-400 hover:text-rose-300 font-medium text-xs transition-colors"
+                title="Delete Component"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
               </button>
             </div>
           </>

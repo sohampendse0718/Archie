@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import {
   ReactFlow,
   Background,
@@ -26,8 +26,8 @@ const defaultEdgeOptions = {
 };
 
 function CanvasInner() {
-  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, setSelectedNode, failedNodes, degradedNodes } = useDiagramStore();
-  const { zoomIn, zoomOut, fitView } = useReactFlow();
+  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, setSelectedNode, failedNodes, degradedNodes, setNodes } = useDiagramStore();
+  const { zoomIn, zoomOut, fitView, screenToFlowPosition } = useReactFlow();
   const { theme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -62,6 +62,41 @@ function CanvasInner() {
       labelBgBorderRadius: 0
     };
   });
+
+  const onDragOver = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+  }, []);
+
+  const onDrop = useCallback(
+    (event: React.DragEvent) => {
+      event.preventDefault();
+
+      const type = event.dataTransfer.getData('application/reactflow');
+      if (typeof type === 'undefined' || !type) {
+        return;
+      }
+
+      const position = screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+
+      const newNode: ArchNode = {
+        id: crypto.randomUUID(),
+        type: 'customArch',
+        position,
+        data: {
+          label: `New ${type.charAt(0).toUpperCase() + type.slice(1)}`,
+          category: type,
+          description: 'Double click to edit or use the inspector panel.',
+        },
+      };
+
+      setNodes([...nodes, newNode]);
+    },
+    [screenToFlowPosition, nodes, setNodes],
+  );
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -110,6 +145,8 @@ function CanvasInner() {
         onConnect={onConnect}
         onNodeClick={(_, node) => setSelectedNode(node as ArchNode)}
         onPaneClick={() => setSelectedNode(null)}
+        onDrop={onDrop}
+        onDragOver={onDragOver}
         nodeTypes={nodeTypes}
         defaultEdgeOptions={defaultEdgeOptions}
         minZoom={0.1}

@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Canvas from '@/components/Canvas';
 import CommandBar from '@/components/CommandBar';
 import InspectorPanel from '@/components/InspectorPanel';
+import Sidebar from '@/components/Sidebar';
 import ScoreBreakdownModal from '@/components/ScoreBreakdownModal';
 import ProfileButton from '@/components/ProfileButton';
 import { Save, Download, Sparkles, Layout, Activity, ArrowLeft, Check, Loader2 } from 'lucide-react';
@@ -254,6 +255,7 @@ export default function EditorPage() {
         ) : (
           <>
             <Canvas />
+            <Sidebar />
             <CommandBar />
             <InspectorPanel />
             <ScoreBreakdownModal />
