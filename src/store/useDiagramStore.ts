@@ -53,6 +53,7 @@ type DiagramState = {
   setCurrentArchitectureId: (id: string | null) => void;
   setCurrentArchitectureTitle: (title: string) => void;
   resetDiagram: () => void;
+  updateNodeData: (id: string, data: Partial<ArchNodeData>) => void;
 };
 
 export const useDiagramStore = create<DiagramState>((set, get) => ({
@@ -120,6 +121,21 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
     degradedNodes: [],
     currentArchitectureId: null,
     currentArchitectureTitle: 'Untitled Architecture',
+  }),
+  updateNodeData: (id, data) => set((state) => {
+    const updatedNodes = state.nodes.map((node) => 
+      node.id === id 
+        ? { ...node, data: { ...node.data, ...data } } 
+        : node
+    );
+    const updatedSelectedNode = state.selectedNode && state.selectedNode.id === id
+      ? { ...state.selectedNode, data: { ...state.selectedNode.data, ...data } }
+      : state.selectedNode;
+    
+    return {
+      nodes: updatedNodes,
+      selectedNode: updatedSelectedNode,
+    };
   }),
   applyAutoLayout: (direction = 'TB') => {
     const { nodes, edges } = getLayoutedElements(get().nodes, get().edges, direction);
