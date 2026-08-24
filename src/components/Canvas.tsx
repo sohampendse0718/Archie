@@ -13,20 +13,22 @@ import {
 import { useDiagramStore, ArchNode } from '@/store/useDiagramStore';
 import { nodeTypes } from './nodes';
 import ExportModal from '@/components/ExportModal';
+import { useTheme } from '@/components/ThemeProvider';
 
 const defaultEdgeOptions = {
   type: 'smoothstep',
   animated: true,
   style: {
-    stroke: '#8b5cf6',
+    stroke: 'var(--accent)',
     strokeWidth: 2,
-    filter: 'drop-shadow(0 0 5px rgba(139, 92, 246, 0.6))',
+    filter: 'drop-shadow(0 0 5px rgba(99, 102, 241, 0.4))',
   },
 };
 
 function CanvasInner() {
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect, setSelectedNode, failedNodes, degradedNodes } = useDiagramStore();
   const { zoomIn, zoomOut, fitView } = useReactFlow();
+  const { theme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const styledEdges = edges.map(edge => {
@@ -37,26 +39,26 @@ function CanvasInner() {
       newEdge = {
         ...newEdge,
         animated: false,
-        style: { ...newEdge.style, stroke: '#ef4444', filter: 'drop-shadow(0 0 5px rgba(239, 68, 68, 0.6))' }
+        style: { ...newEdge.style, stroke: '#ef4444', filter: 'drop-shadow(0 0 5px rgba(239, 68, 68, 0.4))' }
       };
       isAnimated = false;
     } else if (degradedNodes.includes(edge.target)) {
       newEdge = {
         ...newEdge,
-        style: { ...newEdge.style, stroke: '#f59e0b', filter: 'drop-shadow(0 0 5px rgba(245, 158, 11, 0.6))' }
+        style: { ...newEdge.style, stroke: '#f59e0b', filter: 'drop-shadow(0 0 5px rgba(245, 158, 11, 0.4))' }
       };
     }
     
     return {
       ...newEdge,
       style: {
-        stroke: '#a855f7', // Default purple fallback
-        ...newEdge.style,  // Preserves red/amber if set above
+        stroke: 'var(--accent)',
+        ...newEdge.style,
         strokeWidth: 2,
         ...(isAnimated ? { strokeDasharray: '6,6' } : {})
       },
-      labelStyle: { fill: '#a1a1aa', fontWeight: 600 },
-      labelBgStyle: { fill: '#09090b', fillOpacity: 1 },
+      labelStyle: { fill: 'var(--muted)', fontWeight: 600 },
+      labelBgStyle: { fill: 'var(--bg)', fillOpacity: 1 },
       labelBgBorderRadius: 0
     };
   });
@@ -114,24 +116,24 @@ function CanvasInner() {
         maxZoom={4}
         fitView
         fitViewOptions={{ padding: 0.2, maxZoom: 1 }}
-        colorMode="dark"
+        colorMode={theme === 'dark' ? 'dark' : 'light'}
         className="bg-transparent"
       >
         <Background 
           variant={BackgroundVariant.Dots} 
           gap={20} 
           size={1.5} 
-          color="#27272a" 
+          color={theme === 'dark' ? '#27272a' : '#d4d4d8'} 
         />
         
         <Controls 
-          className="!bg-zinc-900/80 !border-zinc-800 !shadow-xl backdrop-blur-md !rounded-xl !overflow-hidden [&>button]:!bg-transparent [&>button]:!border-zinc-800/50 [&>button]:!border-b [&>button]:last:!border-b-0 [&>button]:!text-zinc-400 hover:[&>button]:!text-zinc-100 hover:[&>button]:!bg-zinc-800/50 [&>button]:!transition-colors"
+          className="!bg-surface/80 !border-border-c !shadow-xl backdrop-blur-md !rounded-xl !overflow-hidden [&>button]:!bg-transparent [&>button]:!border-border-c [&>button]:!border-b [&>button]:last:!border-b-0 [&>button]:!text-muted hover:[&>button]:!text-fg hover:[&>button]:!bg-surface-2 [&>button]:!transition-colors"
           showInteractive={false}
           position="bottom-left"
         />
         
         <MiniMap 
-          className="!bg-zinc-900/90 !border !border-zinc-800 !shadow-2xl backdrop-blur-xl !rounded-xl !overflow-hidden"
+          className="!bg-surface/90 !border !border-border-c !shadow-xl backdrop-blur-xl !rounded-xl !overflow-hidden"
           nodeColor={(n) => {
             if (n.type === 'customArch') {
               const cat = (n.data as { category?: string })?.category;
@@ -140,9 +142,9 @@ function CanvasInner() {
               if (cat === 'ai') return '#a855f7';
               if (cat === 'database') return '#f59e0b';
             }
-            return '#3f3f46';
+            return theme === 'dark' ? '#3f3f46' : '#d4d4d8';
           }}
-          maskColor="rgba(9, 9, 11, 0.85)"
+          maskColor={theme === 'dark' ? 'rgba(9, 9, 11, 0.85)' : 'rgba(244, 244, 245, 0.85)'}
           position="bottom-right"
         />
       </ReactFlow>

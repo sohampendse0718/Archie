@@ -94,16 +94,16 @@ export default function CommandBar() {
     <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full max-w-2xl z-20 px-4">
       <form 
         onSubmit={handleSubmit}
-        className="bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-2xl p-2 shadow-2xl flex items-end gap-2 focus-within:border-zinc-700/80 transition-colors"
+        className="bg-surface/90 backdrop-blur-md border border-border-c rounded-2xl p-2 shadow-2xl flex items-end gap-2 focus-within:border-accent transition-colors"
       >
         <textarea
           ref={textareaRef}
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           disabled={isGenerating}
           placeholder="Design a microservices backend..."
-          className="w-full bg-transparent text-zinc-100 placeholder:text-zinc-500 resize-none outline-none py-3 px-4 min-h-[48px] max-h-[200px] overflow-y-auto leading-relaxed [&::-webkit-scrollbar]:hidden disabled:opacity-50"
+          className="w-full bg-transparent text-fg placeholder:text-muted resize-none outline-none py-3 px-4 min-h-[48px] max-h-[200px] overflow-y-auto leading-relaxed [&::-webkit-scrollbar]:hidden disabled:opacity-50"
           rows={1}
           style={{ scrollbarWidth: 'none' }}
         />

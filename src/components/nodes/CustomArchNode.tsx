@@ -32,8 +32,8 @@ const categoryStyles: Record<string, string> = {
 const handleStyle = {
   width: 12,
   height: 12,
-  background: '#27272a',
-  border: '2px solid #52525b',
+  background: 'var(--surface-2)',
+  border: '2px solid var(--border-c)',
   transition: 'all 0.2s',
 };
 
@@ -50,28 +50,28 @@ function CustomArchNode({ id, data, selected }: { id: string; data: ArchNodeData
   return (
     <div
       className={cn(
-        "group relative w-[300px] bg-zinc-900/90 border rounded-xl p-4 shadow-xl transition-all duration-200",
+        "group relative w-[300px] bg-surface/90 border rounded-xl p-4 shadow-xl transition-all duration-200",
         isFailed 
           ? "border-2 border-red-500/80 shadow-[0_0_20px_rgba(239,68,68,0.5)] animate-[pulse_2s_ease-in-out_infinite]" 
           : isDegraded 
           ? "border-2 border-amber-500/80 shadow-[0_0_15px_rgba(245,158,11,0.4)]"
           : selected
-          ? "border-blue-500 ring-2 ring-blue-500/40 shadow-[0_0_25px_rgba(59,130,246,0.35)] scale-[1.02]"
-          : "border-zinc-800 hover:border-zinc-600 hover:shadow-2xl hover:shadow-zinc-500/10"
+          ? "border-accent ring-2 ring-accent/40 shadow-[0_0_25px_rgba(59,130,246,0.35)] scale-[1.02]"
+          : "border-border-c hover:border-accent/50 hover:shadow-2xl hover:shadow-accent/10"
       )}
     >
       <Handle 
         type="target" 
         position={Position.Top} 
         style={handleStyle} 
-        className="hover:!border-zinc-300 hover:!bg-zinc-100 hover:shadow-[0_0_12px_rgba(255,255,255,0.6)]"
+        className="hover:!border-accent hover:!bg-accent hover:shadow-[0_0_12px_rgba(59,130,246,0.6)]"
       />
       <Handle 
         type="target" 
         id="left" 
         position={Position.Left} 
         style={handleStyle} 
-        className="hover:!border-zinc-300 hover:!bg-zinc-100 hover:shadow-[0_0_12px_rgba(255,255,255,0.6)]"
+        className="hover:!border-accent hover:!bg-accent hover:shadow-[0_0_12px_rgba(59,130,246,0.6)]"
       />
       
       <div className="flex items-start justify-between">
@@ -80,14 +80,14 @@ function CustomArchNode({ id, data, selected }: { id: string; data: ArchNodeData
             <Icon size={22} className="opacity-90" />
           </div>
           <div>
-            <h3 className="font-semibold text-zinc-100 text-sm tracking-tight">{data.label}</h3>
-            <p className="text-xs text-zinc-400 mt-1 line-clamp-2">{data.description}</p>
+            <h3 className="font-semibold text-fg text-sm tracking-tight">{data.label}</h3>
+            <p className="text-xs text-muted mt-1 line-clamp-2">{data.description}</p>
           </div>
         </div>
       </div>
 
-      <div className="mt-5 flex items-center justify-between border-t border-zinc-800/60 pt-3">
-        <span className="text-[10px] font-bold tracking-widest uppercase text-zinc-500">
+      <div className="mt-5 flex items-center justify-between border-t border-border-c pt-3">
+        <span className="text-[10px] font-bold tracking-widest uppercase text-muted">
           {data.category}
         </span>
         {isFailed ? (
@@ -112,14 +112,14 @@ function CustomArchNode({ id, data, selected }: { id: string; data: ArchNodeData
         type="source" 
         position={Position.Bottom} 
         style={handleStyle} 
-        className="hover:!border-zinc-300 hover:!bg-zinc-100 hover:shadow-[0_0_12px_rgba(255,255,255,0.6)]"
+        className="hover:!border-accent hover:!bg-accent hover:shadow-[0_0_12px_rgba(59,130,246,0.6)]"
       />
       <Handle 
         type="source" 
         id="right" 
         position={Position.Right} 
         style={handleStyle} 
-        className="hover:!border-zinc-300 hover:!bg-zinc-100 hover:shadow-[0_0_12px_rgba(255,255,255,0.6)]"
+        className="hover:!border-accent hover:!bg-accent hover:shadow-[0_0_12px_rgba(59,130,246,0.6)]"
       />
     </div>
   );

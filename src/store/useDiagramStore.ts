@@ -32,6 +32,8 @@ type DiagramState = {
   weaknesses: string[];
   tradeoffs: string[];
   isScoreModalOpen: boolean;
+  currentArchitectureId: string | null;
+  currentArchitectureTitle: string;
   onNodesChange: OnNodesChange<ArchNode>;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
@@ -48,6 +50,9 @@ type DiagramState = {
   failedNodes: string[];
   degradedNodes: string[];
   toggleNodeOutage: (nodeId: string) => void;
+  setCurrentArchitectureId: (id: string | null) => void;
+  setCurrentArchitectureTitle: (title: string) => void;
+  resetDiagram: () => void;
 };
 
 export const useDiagramStore = create<DiagramState>((set, get) => ({
@@ -63,6 +68,8 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
   isExportModalOpen: false,
   failedNodes: [],
   degradedNodes: [],
+  currentArchitectureId: null,
+  currentArchitectureTitle: 'Untitled Architecture',
   onNodesChange: (changes: NodeChange<ArchNode>[]) => {
     set({
       nodes: applyNodeChanges(changes, get().nodes),
@@ -98,6 +105,22 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
   })),
   setIsScoreModalOpen: (open: boolean) => set({ isScoreModalOpen: open }),
   setIsExportModalOpen: (open: boolean) => set({ isExportModalOpen: open }),
+  setCurrentArchitectureId: (id: string | null) => set({ currentArchitectureId: id }),
+  setCurrentArchitectureTitle: (title: string) => set({ currentArchitectureTitle: title }),
+  resetDiagram: () => set({
+    nodes: [],
+    edges: [],
+    selectedNode: null,
+    architectureScore: null,
+    scoreReasoning: null,
+    strengths: [],
+    weaknesses: [],
+    tradeoffs: [],
+    failedNodes: [],
+    degradedNodes: [],
+    currentArchitectureId: null,
+    currentArchitectureTitle: 'Untitled Architecture',
+  }),
   applyAutoLayout: (direction = 'TB') => {
     const { nodes, edges } = getLayoutedElements(get().nodes, get().edges, direction);
     set({ nodes, edges });

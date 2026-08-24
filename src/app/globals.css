@@ -1,14 +1,40 @@
 @import "tailwindcss";
 @import "@xyflow/react/dist/style.css";
 
+/* Class-based dark mode for Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #09090b;
-  --foreground: #ededed;
+  --bg:         #09090b;
+  --fg:         #ededed;
+  --surface:    #18181b;
+  --surface-2:  #27272a;
+  --border-c:   #3f3f46;
+  --muted:      #71717a;
+  --dim:        #52525b;
+  --accent:     #6366f1;
+}
+
+.light {
+  --bg:         #f4f4f5;
+  --fg:         #09090b;
+  --surface:    #ffffff;
+  --surface-2:  #f4f4f5;
+  --border-c:   #d4d4d8;
+  --muted:      #71717a;
+  --dim:        #a1a1aa;
+  --accent:     #6366f1;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border-c: var(--border-c);
+  --color-muted: var(--muted);
+  --color-dim: var(--dim);
+  --color-accent: var(--accent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -20,7 +46,21 @@ html, body, :root {
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Smooth transitions for theme-aware elements */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color;
+  transition-duration: 0.2s;
+  transition-timing-function: ease;
+}
+
+/* Override: don't transition transforms/opacity (breaks animations) */
+.no-theme-transition,
+.no-theme-transition * {
+  transition-property: none;
 }
