@@ -64,3 +64,11 @@ body {
 .no-theme-transition * {
   transition-property: none;
 }
+
+/* Custom Design Tool Cursor for Canvas */
+.react-flow__pane {
+  cursor: url("data:image/svg+xml;utf8,<svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M2 2 L14 13 L9 14 L6 20 Z' fill='%23000000' stroke='white' stroke-width='1.5' stroke-linejoin='round'/></svg>") 2 2, default !important;
+}
+.react-flow__pane.dragging {
+  cursor: grabbing !important;
+}
