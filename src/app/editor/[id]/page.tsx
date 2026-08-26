@@ -8,9 +8,11 @@ import InspectorPanel from '@/components/InspectorPanel';
 import Sidebar from '@/components/Sidebar';
 import ScoreBreakdownModal from '@/components/ScoreBreakdownModal';
 import ProfileButton from '@/components/ProfileButton';
+import EdgeLegend from '@/components/EdgeLegend';
 import { Save, Download, Sparkles, Layout, Activity, ArrowLeft, Check, Loader2 } from 'lucide-react';
 import { useDiagramStore } from '@/store/useDiagramStore';
 import { createClient } from '@/lib/supabase/client';
+import { ReactFlowProvider, Controls } from '@xyflow/react';
 
 export default function EditorPage() {
   const params = useParams();
@@ -253,13 +255,21 @@ export default function EditorPage() {
             </div>
           </div>
         ) : (
-          <>
+          <ReactFlowProvider>
             <Canvas />
-            <Sidebar />
+            <div className="absolute top-20 left-6 flex flex-col gap-4 z-10">
+              <Sidebar />
+              <EdgeLegend />
+              <Controls 
+                orientation="horizontal" 
+                showInteractive={false} 
+                className="!static !m-0 !shadow-xl border-zinc-800 !w-fit !self-start !bg-surface/80 !border-border-c backdrop-blur-md !rounded-xl !overflow-hidden [&>button]:!bg-transparent [&>button]:!border-border-c [&>button]:!border-r [&>button]:last:!border-r-0 [&>button]:!text-muted hover:[&>button]:!text-fg hover:[&>button]:!bg-surface-2 [&>button]:!transition-colors" 
+              />
+            </div>
             <CommandBar />
             <InspectorPanel />
             <ScoreBreakdownModal />
-          </>
+          </ReactFlowProvider>
         )}
       </main>
     </div>
