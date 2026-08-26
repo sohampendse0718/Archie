@@ -45,6 +45,14 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [greeting, setGreeting] = useState("Hello");
+
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) setGreeting('Good morning');
+    else if (hour < 18) setGreeting('Good afternoon');
+    else setGreeting('Good evening');
+  }, []);
 
   const fetchArchitectures = useCallback(async () => {
     if (!user) return;
@@ -124,7 +132,7 @@ export default function DashboardPage() {
         {/* Page heading */}
         <div className="mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight mb-2">Good morning, {firstName}</h1>
+            <h1 className="text-3xl font-bold tracking-tight mb-2">{greeting}, {firstName}</h1>
             <p className="text-muted">
               {loading ? 'Loading your projects...' : architectures.length === 0 ? "You don't have any projects yet." : `You have ${architectures.length} project${architectures.length !== 1 ? 's' : ''} in your workspace.`}
             </p>
