@@ -96,7 +96,7 @@ export default function DashboardPage() {
   ).split(' ')[0];
 
   return (
-    <div className="relative min-h-screen bg-[#09090b] text-fg flex flex-col font-sans overflow-hidden">
+    <div className="relative min-h-screen bg-bg text-fg flex flex-col font-sans overflow-hidden">
       {/* ── Dynamic Background ── */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0d_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0d_1px,transparent_1px)] bg-[size:24px_24px] opacity-20" />
@@ -105,14 +105,14 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Header ── */}
-      <header className="sticky top-0 z-50 h-[72px] px-6 bg-[#0c0c10]/80 backdrop-blur-xl border-b border-white/5 shadow-[0_8px_30px_rgb(0,0,0,0.4)] flex items-center justify-between">
+      <header className="sticky top-0 z-50 h-[72px] px-6 bg-surface/80 backdrop-blur-xl border-b border-border-c shadow-[0_8px_30px_rgb(0,0,0,0.4)] flex items-center justify-between">
         <div className="flex items-center gap-3 relative z-10">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
             <Sparkles size={16} className="text-white" />
           </div>
-          <span className="font-bold text-lg tracking-tight text-zinc-100">Archie</span>
+          <span className="font-bold text-lg tracking-tight text-fg">Archie</span>
           <div className="h-4 w-px bg-border-c mx-2" />
-          <span className="font-mono text-sm text-zinc-500 tracking-wider uppercase">Workspace</span>
+          <span className="font-mono text-sm text-muted tracking-wider uppercase">Workspace</span>
         </div>
 
         <div className="flex items-center gap-4">
@@ -120,7 +120,7 @@ export default function DashboardPage() {
             id="btn-new-architecture"
             onClick={handleCreate}
             disabled={creating}
-            className="flex items-center gap-2 px-4 py-2 bg-zinc-900/80 backdrop-blur-md border border-purple-500/30 text-zinc-100 hover:bg-purple-500/10 hover:border-purple-500/60 transition-all duration-300 shadow-[0_0_15px_-3px_rgba(168,85,247,0.15)] rounded-xl text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-4 py-2 bg-surface-2/80 backdrop-blur-md border border-purple-500/30 text-fg hover:bg-purple-500/10 hover:border-purple-500/60 transition-all duration-300 shadow-[0_0_15px_-3px_rgba(168,85,247,0.15)] rounded-xl text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {creating ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
             New Project
@@ -250,15 +250,15 @@ export default function DashboardPage() {
       {/* Delete Confirmation Modal */}
       {projectToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 shadow-2xl max-w-sm w-full mx-4 flex flex-col gap-4 animate-fade-scale-in">
+          <div className="bg-surface border border-border-c rounded-xl p-6 shadow-2xl max-w-sm w-full mx-4 flex flex-col gap-4 animate-fade-scale-in">
             <div>
-              <h2 className="text-lg font-semibold text-white">Delete Project</h2>
-              <p className="text-sm text-zinc-400 mt-1">Are you sure you want to delete this project? This action cannot be undone.</p>
+              <h2 className="text-lg font-semibold text-fg">Delete Project</h2>
+              <p className="text-sm text-muted mt-1">Are you sure you want to delete this project? This action cannot be undone.</p>
             </div>
             <div className="flex justify-end gap-3 mt-2">
               <button
                 onClick={() => setProjectToDelete(null)}
-                className="px-4 py-2 text-sm text-zinc-300 hover:text-white transition-colors"
+                className="px-4 py-2 text-sm text-muted hover:text-fg transition-colors"
                 disabled={deletingId !== null}
               >
                 Cancel

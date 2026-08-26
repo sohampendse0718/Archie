@@ -76,16 +76,16 @@ export default function InspectorPanel() {
         <div className="p-4 flex flex-col gap-4">
           <div>
              <h3 className="text-[10px] font-bold text-dim uppercase tracking-wider mb-2">Connection Type</h3>
-             <div className="flex bg-zinc-900/60 border border-zinc-800 rounded-lg p-1">
+             <div className="flex bg-surface-2/60 border border-border-c rounded-lg p-1">
                <button
                  onClick={() => updateEdge(selectedEdge.id, { animated: false })}
-                 className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors ${!selectedEdge.animated ? 'bg-indigo-600 text-white shadow-sm' : 'text-zinc-400 hover:text-zinc-200'}`}
+                 className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors ${!selectedEdge.animated ? 'bg-indigo-600 text-white shadow-sm' : 'text-muted hover:text-fg'}`}
                >
                  Synchronous
                </button>
                <button
                  onClick={() => updateEdge(selectedEdge.id, { animated: true })}
-                 className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors ${selectedEdge.animated ? 'bg-indigo-600 text-white shadow-sm' : 'text-zinc-400 hover:text-zinc-200'}`}
+                 className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors ${selectedEdge.animated ? 'bg-indigo-600 text-white shadow-sm' : 'text-muted hover:text-fg'}`}
                >
                  Asynchronous
                </button>
@@ -269,7 +269,7 @@ export default function InspectorPanel() {
             <div className="flex gap-2 pt-2 border-t border-border-c/50 mt-2">
               <button
                 onClick={() => setEditMode('manual')}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 bg-zinc-800/40 hover:bg-zinc-800 border border-zinc-700/60 rounded-lg text-zinc-300 hover:text-zinc-100 font-medium text-xs transition-colors"
+                className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 bg-surface-2/40 hover:bg-surface-2 border border-border-c/60 rounded-lg text-muted hover:text-fg font-medium text-xs transition-colors"
               >
                 <Edit2 className="w-3.5 h-3.5" />
                 Edit
@@ -295,22 +295,22 @@ export default function InspectorPanel() {
         {editMode === 'manual' && (
           <form id="node-edit-form" onSubmit={handleManualSave} className="space-y-3.5">
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 mb-1">Component Name</label>
+              <label className="block text-xs font-semibold text-muted mb-1">Component Name</label>
               <input
                 type="text"
                 required
                 value={label}
                 onChange={e => setLabel(e.target.value)}
-                className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors"
+                className="w-full bg-surface-2/60 border border-border-c focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 mb-1">Category</label>
+              <label className="block text-xs font-semibold text-muted mb-1">Category</label>
               <select
                 value={category}
                 onChange={e => setCategory(e.target.value)}
-                className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors capitalize"
+                className="w-full bg-surface-2/60 border border-border-c focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors capitalize"
               >
                 <option value="frontend">Frontend</option>
                 <option value="backend">Backend</option>
@@ -321,35 +321,35 @@ export default function InspectorPanel() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 mb-1">Description</label>
+              <label className="block text-xs font-semibold text-muted mb-1">Description</label>
               <textarea
                 required
                 rows={3}
                 value={description}
                 onChange={e => setDescription(e.target.value)}
-                className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors resize-none"
+                className="w-full bg-surface-2/60 border border-border-c focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors resize-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 mb-1">Purpose</label>
+              <label className="block text-xs font-semibold text-muted mb-1">Purpose</label>
               <textarea
                 required
                 rows={2}
                 value={purpose}
                 onChange={e => setPurpose(e.target.value)}
-                className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors resize-none"
+                className="w-full bg-surface-2/60 border border-border-c focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors resize-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 mb-1">Bottleneck Risk (Optional)</label>
+              <label className="block text-xs font-semibold text-muted mb-1">Bottleneck Risk (Optional)</label>
               <textarea
                 rows={2}
                 value={bottleneckRisk}
                 onChange={e => setBottleneckRisk(e.target.value)}
                 placeholder="No serious bottleneck risk"
-                className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors resize-none"
+                className="w-full bg-surface-2/60 border border-border-c focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors resize-none"
               />
             </div>
 
@@ -357,7 +357,7 @@ export default function InspectorPanel() {
               <button
                 type="button"
                 onClick={() => setEditMode('view')}
-                className="flex-1 py-2 border border-zinc-800 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 rounded-lg text-xs font-semibold transition-colors"
+                className="flex-1 py-2 border border-border-c hover:bg-surface-2 text-muted hover:text-fg rounded-lg text-xs font-semibold transition-colors"
               >
                 Cancel
               </button>
@@ -375,7 +375,7 @@ export default function InspectorPanel() {
         {editMode === 'ai' && (
           <form onSubmit={handleAiRefine} className="space-y-3.5">
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 mb-1.5">
+              <label className="block text-xs font-semibold text-muted mb-1.5">
                 Instruction for AI
               </label>
               <textarea
@@ -385,7 +385,7 @@ export default function InspectorPanel() {
                 value={aiPrompt}
                 onChange={e => setAiPrompt(e.target.value)}
                 placeholder="e.g. Add an ElastiCache layer in front of this, or convert this MySQL db into an RDS Aurora Multi-AZ setup."
-                className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors resize-none disabled:opacity-50"
+                className="w-full bg-surface-2/60 border border-border-c focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors resize-none disabled:opacity-50"
               />
             </div>
 
@@ -401,7 +401,7 @@ export default function InspectorPanel() {
                 type="button"
                 disabled={isGenerating}
                 onClick={() => setEditMode('view')}
-                className="flex-1 py-2 border border-zinc-800 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 rounded-lg text-xs font-semibold transition-colors disabled:opacity-55"
+                className="flex-1 py-2 border border-border-c hover:bg-surface-2 text-muted hover:text-fg rounded-lg text-xs font-semibold transition-colors disabled:opacity-55"
               >
                 Cancel
               </button>

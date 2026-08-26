@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { LogOut, Settings } from 'lucide-react';
+import { Settings } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
 
 function getInitials(name?: string | null, email?: string | null): string {
@@ -19,7 +19,6 @@ export default function ProfileButton() {
   const { user, supabase } = useAuth();
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [signingOut, setSigningOut] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -38,12 +37,6 @@ export default function ProfileButton() {
     return () => document.removeEventListener('keydown', handler);
   }, [open]);
 
-  const handleSignOut = async () => {
-    setSigningOut(true);
-    await supabase.auth.signOut();
-    router.push('/login');
-    router.refresh();
-  };
 
   if (!user) return null;
 
@@ -137,27 +130,6 @@ export default function ProfileButton() {
             >
               <Settings size={14} style={{ color: 'var(--muted)', flexShrink: 0 }} />
               Settings & Appearance
-            </button>
-          </div>
-
-          {/* Sign out */}
-          <div style={{ padding: '0 6px 6px', borderTop: '1px solid var(--border-c)', paddingTop: 6 }}>
-            <button
-              id="btn-signout"
-              onClick={handleSignOut}
-              disabled={signingOut}
-              style={{
-                width: '100%', display: 'flex', alignItems: 'center', gap: 10,
-                padding: '9px 12px', border: 'none', borderRadius: 8,
-                background: 'transparent', cursor: signingOut ? 'not-allowed' : 'pointer',
-                fontFamily: 'inherit', fontSize: 13, fontWeight: 500, color: '#f87171', textAlign: 'left',
-                opacity: signingOut ? 0.6 : 1,
-              }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(248,113,113,0.08)'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
-            >
-              <LogOut size={14} style={{ flexShrink: 0 }} />
-              Sign out
             </button>
           </div>
         </div>

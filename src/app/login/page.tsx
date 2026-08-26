@@ -79,7 +79,7 @@ export default function LoginPage() {
   ];
 
   return (
-    <div className="min-h-screen w-full bg-[#09090b] bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] flex overflow-hidden animate-fade-in">
+    <div className="min-h-screen w-full bg-bg bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] flex overflow-hidden animate-fade-in">
       {/* Schematic lines / nodes overlay */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-15">
         <svg className="absolute w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -125,13 +125,13 @@ export default function LoginPage() {
 
           <div className="animate-fade-in-up space-y-3" style={{ animationDelay: '300ms' }}>
             <p className="text-xs font-mono font-semibold tracking-[0.2em] uppercase text-indigo-400">AI Architecture Studio</p>
-            <h2 className="text-5xl font-bold text-white leading-[1.1] tracking-tight">
+            <h2 className="text-5xl font-bold text-fg leading-[1.1] tracking-tight">
               Design systems{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
                 that scale.
               </span>
             </h2>
-            <p className="text-zinc-400 text-lg leading-relaxed max-w-sm mt-4">
+            <p className="text-muted text-lg leading-relaxed max-w-sm mt-4">
               Describe your product in plain English. Archie generates production-ready architecture diagrams with scoring and failure analysis.
             </p>
           </div>
@@ -141,15 +141,15 @@ export default function LoginPage() {
             {features.map(({ icon: Icon, label, desc }, i) => (
               <div 
                 key={label} 
-                className="flex items-start gap-4 group p-3.5 rounded-xl border border-white/5 bg-white/5 backdrop-blur-sm animate-fade-in-up hover:border-indigo-500/20 transition-colors"
+                className="flex items-start gap-4 group p-3.5 rounded-xl border border-border-c bg-surface/50 backdrop-blur-sm animate-fade-in-up hover:border-indigo-500/40 transition-colors"
                 style={{ animationDelay: `${400 + i * 100}ms` }}
               >
-                <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-zinc-800/80 border border-zinc-700/50 flex items-center justify-center group-hover:border-indigo-500/40 group-hover:bg-indigo-500/5 transition-colors">
-                  <Icon className="w-4 h-4 text-zinc-400 group-hover:text-indigo-400 transition-colors" />
+                <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-surface-2 border border-border-c flex items-center justify-center group-hover:border-indigo-500/40 group-hover:bg-indigo-500/10 transition-colors">
+                  <Icon className="w-4 h-4 text-muted group-hover:text-indigo-500 transition-colors" />
                 </div>
                 <div>
-                  <p className="text-zinc-200 text-sm font-medium">{label}</p>
-                  <p className="text-zinc-500 text-xs mt-0.5">{desc}</p>
+                  <p className="text-fg text-sm font-medium">{label}</p>
+                  <p className="text-dim text-xs mt-0.5">{desc}</p>
                 </div>
               </div>
             ))}
@@ -158,7 +158,7 @@ export default function LoginPage() {
 
         {/* Bottom tagline */}
         <div className="relative z-10 animate-fade-in-up" style={{ animationDelay: '800ms' }}>
-          <p className="text-zinc-600 text-sm">
+          <p className="text-dim text-sm">
             &quot;Architecture is the art of how to waste space.&quot; — Philip Johnson
           </p>
         </div>
@@ -173,7 +173,7 @@ export default function LoginPage() {
 
         <div className="relative w-full max-w-[400px] animate-fade-scale-in" style={{ animationDelay: '500ms' }}>
           {/* Card */}
-          <div className="relative bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-8 shadow-[0_0_50px_-12px_rgba(79,70,229,0.15)] backdrop-blur-xl">
+          <div className="relative bg-surface/80 border border-border-c rounded-2xl p-8 shadow-[0_0_50px_-12px_rgba(79,70,229,0.15)] backdrop-blur-xl">
             {/* Animated gradient border */}
             <div className="absolute inset-0 rounded-2xl pointer-events-none overflow-hidden">
               <div className="absolute inset-[-1px] rounded-2xl bg-gradient-to-br from-indigo-500/20 via-transparent to-blue-500/20 opacity-60" />
@@ -189,10 +189,10 @@ export default function LoginPage() {
 
             {/* Heading */}
             <div className="mb-7">
-              <h2 className="text-zinc-50 text-2xl font-bold tracking-tight">
+              <h2 className="text-fg text-2xl font-bold tracking-tight">
                 {mode === 'signin' ? 'Welcome back' : 'Create account'}
               </h2>
-              <p className="text-zinc-500 text-sm mt-1">
+              <p className="text-muted text-sm mt-1">
                 {mode === 'signin'
                   ? 'Sign in to your architecture workspace'
                   : 'Start designing with AI-powered tools'}
@@ -217,10 +217,10 @@ export default function LoginPage() {
                 id="btn-google"
                 onClick={() => handleOAuth('google')}
                 disabled={loading !== null}
-                className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-zinc-800/60 hover:bg-zinc-800 border border-zinc-700/60 hover:border-zinc-600 rounded-xl text-zinc-200 text-sm font-medium transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed group hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/10"
+                className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-surface-2 hover:bg-surface border border-border-c rounded-xl text-fg text-sm font-medium transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed group hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/10"
               >
                 {loading === 'google' ? (
-                  <span className="w-4 h-4 border-2 border-zinc-500 border-t-zinc-200 rounded-full animate-spin" />
+                  <span className="w-4 h-4 border-2 border-dim border-t-fg rounded-full animate-spin" />
                 ) : (
                   <svg className="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -236,12 +236,12 @@ export default function LoginPage() {
                 id="btn-github"
                 onClick={() => handleOAuth('github')}
                 disabled={loading !== null}
-                className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-zinc-800/60 hover:bg-zinc-800 border border-zinc-700/60 hover:border-zinc-600 rounded-xl text-zinc-200 text-sm font-medium transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed group hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/10"
+                className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-surface-2 hover:bg-surface border border-border-c rounded-xl text-fg text-sm font-medium transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed group hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/10"
               >
                 {loading === 'github' ? (
-                  <span className="w-4 h-4 border-2 border-zinc-500 border-t-zinc-200 rounded-full animate-spin" />
+                  <span className="w-4 h-4 border-2 border-dim border-t-fg rounded-full animate-spin" />
                 ) : (
-                  <svg className="w-4 h-4 fill-current text-zinc-300" viewBox="0 0 24 24" aria-hidden="true">
+                  <svg className="w-4 h-4 fill-current text-fg" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
                   </svg>
                 )}
@@ -251,19 +251,19 @@ export default function LoginPage() {
 
             {/* Divider */}
             <div className="flex items-center gap-3 mb-6">
-              <div className="flex-1 h-px bg-zinc-800" />
-              <span className="text-zinc-600 text-xs font-medium">or continue with email</span>
-              <div className="flex-1 h-px bg-zinc-800" />
+              <div className="flex-1 h-px bg-border-c" />
+              <span className="text-dim text-xs font-medium">or continue with email</span>
+              <div className="flex-1 h-px bg-border-c" />
             </div>
 
             {/* Email/Password Form */}
             <form onSubmit={handleEmailAuth} className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-zinc-400 text-xs font-medium mb-1.5">
+                <label htmlFor="email" className="block text-muted text-xs font-medium mb-1.5">
                   Email address
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" />
                   <input
                     id="email"
                     type="email"
@@ -272,17 +272,17 @@ export default function LoginPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
-                    className="w-full pl-10 pr-4 py-2.5 bg-zinc-800/60 border border-zinc-700/60 focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/30 rounded-xl text-zinc-100 text-sm placeholder:text-zinc-600 outline-none transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 bg-surface-2 border border-border-c focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/30 rounded-xl text-fg text-sm placeholder:text-dim outline-none transition-all"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-zinc-400 text-xs font-medium mb-1.5">
+                <label htmlFor="password" className="block text-muted text-xs font-medium mb-1.5">
                   Password
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" />
                   <input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
@@ -292,18 +292,18 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full pl-10 pr-11 py-2.5 bg-zinc-800/60 border border-zinc-700/60 focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/30 rounded-xl text-zinc-100 text-sm placeholder:text-zinc-600 outline-none transition-all"
+                    className="w-full pl-10 pr-11 py-2.5 bg-surface-2 border border-border-c focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/30 rounded-xl text-fg text-sm placeholder:text-dim outline-none transition-all"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted hover:text-fg transition-colors"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
                 {mode === 'signup' && (
-                  <p className="text-zinc-600 text-xs mt-1.5">Minimum 6 characters</p>
+                  <p className="text-dim text-xs mt-1.5">Minimum 6 characters</p>
                 )}
               </div>
 
@@ -322,7 +322,7 @@ export default function LoginPage() {
             </form>
 
             {/* Toggle Mode */}
-            <p className="text-center text-zinc-500 text-sm mt-6">
+            <p className="text-center text-muted text-sm mt-6">
               {mode === 'signin' ? "Don't have an account?" : 'Already have an account?'}{' '}
               <button
                 onClick={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); setError(null); setMessage(null); }}
@@ -334,10 +334,10 @@ export default function LoginPage() {
           </div>
 
           {/* Footer */}
-          <p className="text-center text-zinc-700 text-xs mt-6">
+          <p className="text-center text-dim text-xs mt-6">
             By continuing, you agree to our{' '}
-            <span className="text-zinc-500">Terms of Service</span> &amp;{' '}
-            <span className="text-zinc-500">Privacy Policy</span>
+            <span className="text-muted">Terms of Service</span> &amp;{' '}
+            <span className="text-muted">Privacy Policy</span>
           </p>
         </div>
       </div>

@@ -143,7 +143,7 @@ export default function EditorPage() {
       .eq('id', id);
   };
 
-  let scoreColor = 'text-zinc-400 border-zinc-700 bg-zinc-800/40';
+  let scoreColor = 'text-muted border-border-c bg-surface-2/40';
   if (architectureScore !== null) {
     if (architectureScore >= 90) scoreColor = 'text-green-400 border-green-500/30 bg-green-500/10 shadow-[0_0_10px_rgba(34,197,94,0.2)]';
     else if (architectureScore >= 75) scoreColor = 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10 shadow-[0_0_10px_rgba(234,179,8,0.2)]';
@@ -263,7 +263,7 @@ export default function EditorPage() {
               <Controls 
                 orientation="horizontal" 
                 showInteractive={false} 
-                className="!static !m-0 !shadow-xl border-zinc-800 !w-fit !self-start !bg-surface/80 !border-border-c backdrop-blur-md !rounded-xl !overflow-hidden [&>button]:!bg-transparent [&>button]:!border-border-c [&>button]:!border-r [&>button]:last:!border-r-0 [&>button]:!text-muted hover:[&>button]:!text-fg hover:[&>button]:!bg-surface-2 [&>button]:!transition-colors" 
+                className="!static !m-0 !shadow-xl !w-fit !self-start !bg-surface/80 !border-border-c backdrop-blur-md !rounded-xl !overflow-hidden [&>button]:!bg-transparent [&>button]:!border-border-c [&>button]:!border-r [&>button]:last:!border-r-0 [&>button]:!text-muted hover:[&>button]:!text-fg hover:[&>button]:!bg-surface-2 [&>button]:!transition-colors" 
               />
             </div>
             <CommandBar />

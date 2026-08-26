@@ -48,7 +48,7 @@ export default function Sidebar() {
 
       <div className="p-3 border-t border-border-c/50 bg-surface-2/30">
         <p className="text-[10px] text-muted leading-tight">
-          <strong className="text-zinc-300 font-semibold">Tip:</strong> Hover over a component and drag from the small dots on its edges to create wires between components.
+          <strong className="text-fg font-semibold">Tip:</strong> Hover over a component and drag from the small dots on its edges to create wires between components.
         </p>
       </div>
     </aside>

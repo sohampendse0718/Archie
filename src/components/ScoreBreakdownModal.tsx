@@ -16,7 +16,7 @@ export default function ScoreBreakdownModal() {
 
   if (!isScoreModalOpen || architectureScore === null) return null;
 
-  let scoreColor = 'text-zinc-100';
+  let scoreColor = 'text-fg';
   if (architectureScore >= 90) scoreColor = 'text-green-400';
   else if (architectureScore >= 75) scoreColor = 'text-yellow-400';
   else scoreColor = 'text-red-400';

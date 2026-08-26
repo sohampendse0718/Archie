@@ -162,33 +162,33 @@ export default function ExportModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      <div className="bg-surface-2 border border-border-c rounded-2xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
         
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-zinc-800/60 bg-zinc-900/50">
+        <div className="flex items-center justify-between p-5 border-b border-border-c/60 bg-surface-2/50">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-500/10 rounded-lg border border-blue-500/20">
               <Download className="w-5 h-5 text-blue-400" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-zinc-100 tracking-tight">Export Architecture</h2>
-              <p className="text-xs text-zinc-400">Generate implementation files and diagrams.</p>
+              <h2 className="text-lg font-semibold text-fg tracking-tight">Export Architecture</h2>
+              <p className="text-xs text-muted">Generate implementation files and diagrams.</p>
             </div>
           </div>
           <button 
             onClick={() => setIsExportModalOpen(false)}
-            className="p-2 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 rounded-lg transition-colors"
+            className="p-2 text-muted hover:text-fg hover:bg-surface rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="flex px-5 pt-4 gap-4 border-b border-zinc-800/60 bg-zinc-900/30">
+        <div className="flex px-5 pt-4 gap-4 border-b border-border-c/60 bg-surface-2/30">
           <button
             onClick={() => setActiveTab('docker')}
             className={`pb-3 text-sm font-medium flex items-center gap-2 border-b-2 transition-colors ${
-              activeTab === 'docker' ? 'border-blue-500 text-blue-400' : 'border-transparent text-zinc-400 hover:text-zinc-300'
+              activeTab === 'docker' ? 'border-blue-500 text-blue-400' : 'border-transparent text-muted hover:text-fg'
             }`}
           >
             <FileCode className="w-4 h-4" />
@@ -197,7 +197,7 @@ export default function ExportModal() {
           <button
             onClick={() => setActiveTab('spec')}
             className={`pb-3 text-sm font-medium flex items-center gap-2 border-b-2 transition-colors ${
-              activeTab === 'spec' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-zinc-400 hover:text-zinc-300'
+              activeTab === 'spec' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-muted hover:text-fg'
             }`}
           >
             <FileText className="w-4 h-4" />
@@ -206,7 +206,7 @@ export default function ExportModal() {
           <button
             onClick={() => setActiveTab('image')}
             className={`pb-3 text-sm font-medium flex items-center gap-2 border-b-2 transition-colors ${
-              activeTab === 'image' ? 'border-emerald-500 text-emerald-400' : 'border-transparent text-zinc-400 hover:text-zinc-300'
+              activeTab === 'image' ? 'border-emerald-500 text-emerald-400' : 'border-transparent text-muted hover:text-fg'
             }`}
           >
             <ImageIcon className="w-4 h-4" />
@@ -215,18 +215,18 @@ export default function ExportModal() {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-auto bg-[#0a0a0c] p-6">
+        <div className="flex-1 overflow-auto bg-bg p-6">
           
           {activeTab === 'docker' && (
             <div className="flex flex-col h-full gap-4">
-              <p className="text-sm text-zinc-400">Generated <code className="text-xs bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-300">docker-compose.yml</code> based on your backend and database nodes.</p>
+              <p className="text-sm text-muted">Generated <code className="text-xs bg-surface px-1.5 py-0.5 rounded text-fg">docker-compose.yml</code> based on your backend and database nodes.</p>
               <div className="relative flex-1 group">
-                <pre className="h-full bg-[#121214] border border-zinc-800/80 rounded-xl p-4 overflow-auto text-xs text-zinc-300 font-mono leading-relaxed shadow-inner">
+                <pre className="h-full bg-surface/50 border border-border-c rounded-xl p-4 overflow-auto text-xs text-muted font-mono leading-relaxed shadow-inner">
                   {dockerContent}
                 </pre>
               </div>
               <div className="flex justify-end gap-3 mt-2 shrink-0">
-                <button onClick={() => handleCopy(dockerContent)} className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-sm font-medium rounded-lg transition-colors border border-zinc-700/50">
+                <button onClick={() => handleCopy(dockerContent)} className="flex items-center gap-2 px-4 py-2 bg-surface-2 hover:bg-surface text-fg text-sm font-medium rounded-lg transition-colors border border-border-c">
                   <Copy className="w-4 h-4" /> Copy to Clipboard
                 </button>
                 <button onClick={() => handleDownloadText(dockerContent, 'docker-compose.yml')} className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors shadow-[0_0_15px_rgba(37,99,235,0.3)]">
@@ -238,14 +238,14 @@ export default function ExportModal() {
 
           {activeTab === 'spec' && (
             <div className="flex flex-col h-full gap-4">
-              <p className="text-sm text-zinc-400">Generated <code className="text-xs bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-300">ARCHITECTURE.md</code> with system health and component details.</p>
+              <p className="text-sm text-muted">Generated <code className="text-xs bg-surface px-1.5 py-0.5 rounded text-fg">ARCHITECTURE.md</code> with system health and component details.</p>
               <div className="relative flex-1 group">
-                <pre className="h-full bg-[#121214] border border-zinc-800/80 rounded-xl p-4 overflow-auto text-xs text-zinc-300 font-mono leading-relaxed shadow-inner">
+                <pre className="h-full bg-surface/50 border border-border-c rounded-xl p-4 overflow-auto text-xs text-muted font-mono leading-relaxed shadow-inner">
                   {specContent}
                 </pre>
               </div>
               <div className="flex justify-end gap-3 mt-2 shrink-0">
-                <button onClick={() => handleCopy(specContent)} className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-sm font-medium rounded-lg transition-colors border border-zinc-700/50">
+                <button onClick={() => handleCopy(specContent)} className="flex items-center gap-2 px-4 py-2 bg-surface-2 hover:bg-surface text-fg text-sm font-medium rounded-lg transition-colors border border-border-c">
                   <Copy className="w-4 h-4" /> Copy to Clipboard
                 </button>
                 <button onClick={() => handleDownloadText(specContent, 'ARCHITECTURE.md')} className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors shadow-[0_0_15px_rgba(79,70,229,0.3)]">
@@ -261,8 +261,8 @@ export default function ExportModal() {
                 <ImageIcon className="w-10 h-10 text-emerald-400" />
               </div>
               <div className="max-w-md">
-                <h3 className="text-lg font-medium text-zinc-200 mb-2">Export Diagram to PNG</h3>
-                <p className="text-sm text-zinc-400 leading-relaxed mb-6">
+                <h3 className="text-lg font-medium text-fg mb-2">Export Diagram to PNG</h3>
+                <p className="text-sm text-muted leading-relaxed mb-6">
                   Save a high-resolution image of your current canvas. Backgrounds and visual states (including failure simulations) will be preserved exactly as shown.
                 </p>
                 <button 
