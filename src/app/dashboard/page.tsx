@@ -45,6 +45,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
   const [greeting, setGreeting] = useState("Hello");
 
   useEffect(() => {
@@ -78,12 +79,13 @@ export default function DashboardPage() {
     else setCreating(false);
   };
 
-  const handleDelete = async (e: React.MouseEvent, id: string) => {
-    e.stopPropagation();
-    setDeletingId(id);
-    await supabase.from('architectures').delete().eq('id', id);
-    setArchitectures(prev => prev.filter(a => a.id !== id));
+  const confirmDelete = async () => {
+    if (!projectToDelete) return;
+    setDeletingId(projectToDelete);
+    await supabase.from('architectures').delete().eq('id', projectToDelete);
+    setArchitectures(prev => prev.filter(a => a.id !== projectToDelete));
     setDeletingId(null);
+    setProjectToDelete(null);
   };
 
   const firstName = (
@@ -189,9 +191,9 @@ export default function DashboardPage() {
                       <h3 className="font-semibold text-lg line-clamp-1 group-hover:text-accent transition-colors">{arch.title}</h3>
                     </div>
                     <button
-                      onClick={(e) => handleDelete(e, arch.id)}
+                      onClick={(e) => { e.stopPropagation(); setProjectToDelete(arch.id); }}
                       disabled={deletingId === arch.id}
-                      className="p-1.5 text-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                      className="p-1.5 text-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors relative z-20"
                     >
                       {deletingId === arch.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
                     </button>
@@ -244,6 +246,34 @@ export default function DashboardPage() {
           </div>
         )}
       </main>
+
+      {/* Delete Confirmation Modal */}
+      {projectToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 shadow-2xl max-w-sm w-full mx-4 flex flex-col gap-4 animate-fade-scale-in">
+            <div>
+              <h2 className="text-lg font-semibold text-white">Delete Project</h2>
+              <p className="text-sm text-zinc-400 mt-1">Are you sure you want to delete this project? This action cannot be undone.</p>
+            </div>
+            <div className="flex justify-end gap-3 mt-2">
+              <button
+                onClick={() => setProjectToDelete(null)}
+                className="px-4 py-2 text-sm text-zinc-300 hover:text-white transition-colors"
+                disabled={deletingId !== null}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                disabled={deletingId !== null}
+                className="flex items-center gap-2 px-4 py-2 text-sm bg-red-500/10 text-red-500 border border-red-500/20 rounded-lg hover:bg-red-500/20 hover:border-red-500/40 transition-all disabled:opacity-50"
+              >
+                {deletingId !== null ? <Loader2 size={16} className="animate-spin" /> : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
