@@ -17,16 +17,18 @@ export default function ExportModal() {
   const generateDockerCompose = () => {
     let yaml = `version: '3.8'\n\nservices:\n`;
     
-    const relevantNodes = nodes.filter(n => 
-      n.data.category === 'database' || n.data.category === 'infrastructure' || n.data.category === 'backend'
-    );
+    const relevantNodes = nodes.filter(n => {
+      const cat = (n.data as any).category;
+      return cat === 'database' || cat === 'infrastructure' || cat === 'backend';
+    });
 
     if (relevantNodes.length === 0) {
       yaml += `  # No backend, database, or infrastructure services detected in diagram.\n`;
     }
 
     relevantNodes.forEach(node => {
-      const name = node.data.label.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      const data = node.data as any;
+      const name = (data.label || 'service').toLowerCase().replace(/[^a-z0-9]/g, '-');
       yaml += `  ${name}:\n`;
       
       // Basic educated guesses based on name
@@ -46,11 +48,14 @@ export default function ExportModal() {
       yaml += `\n`;
     });
 
-    const hasVolumes = relevantNodes.some(n => n.data.label.toLowerCase().includes('postgres') || n.data.label.toLowerCase().includes('db'));
+    const hasVolumes = relevantNodes.some(n => {
+      const label = ((n.data as any).label || '').toLowerCase();
+      return label.includes('postgres') || label.includes('db');
+    });
     if (hasVolumes) {
       yaml += `volumes:\n`;
       relevantNodes.forEach(node => {
-        const name = node.data.label.toLowerCase().replace(/[^a-z0-9]/g, '-');
+        const name = ((node.data as any).label || 'service').toLowerCase().replace(/[^a-z0-9]/g, '-');
         if (name.includes('postgres') || name.includes('db')) {
           yaml += `  ${name}_data:\n`;
         }
@@ -84,20 +89,37 @@ export default function ExportModal() {
     md += `## Components\n\n`;
     
     const categories = ['frontend', 'backend', 'database', 'ai', 'infrastructure'];
-    
+    const categorizedNodeIds = new Set<string>();
+
     categories.forEach(cat => {
-      const catNodes = nodes.filter(n => n.data.category === cat);
+      const catNodes = nodes.filter(n => (n.data as any).category === cat);
       if (catNodes.length > 0) {
         md += `### ${cat.charAt(0).toUpperCase() + cat.slice(1)}\n\n`;
         catNodes.forEach(node => {
-          md += `#### ${node.data.label}\n`;
-          if (node.data.description) md += `${node.data.description}\n\n`;
-          if (node.data.purpose) md += `- **Purpose**: ${node.data.purpose}\n`;
-          if (node.data.bottleneckRisk) md += `- **Bottleneck Risk**: ${node.data.bottleneckRisk}\n`;
+          categorizedNodeIds.add(node.id);
+          const data = node.data as any;
+          md += `#### ${data.label}\n`;
+          if (data.description) md += `${data.description}\n\n`;
+          if (data.purpose) md += `- **Purpose**: ${data.purpose}\n`;
+          if (data.bottleneckRisk) md += `- **Bottleneck Risk**: ${data.bottleneckRisk}\n`;
           md += `\n`;
         });
       }
     });
+
+    const otherNodes = nodes.filter(n => !categorizedNodeIds.has(n.id));
+    if (otherNodes.length > 0) {
+      md += `### Elements\n\n`;
+      otherNodes.forEach(node => {
+        const data = node.data as any;
+        md += `#### ${data.label}\n`;
+        if (data.description) md += `${data.description}\n\n`;
+        if (data.shape) md += `- **Shape**: ${data.shape}\n`;
+        if (data.participantType) md += `- **Type**: ${data.participantType}\n`;
+        if (data.level) md += `- **Level**: ${data.level}\n`;
+        md += `\n`;
+      });
+    }
 
     return md;
   };

@@ -16,8 +16,17 @@ import {
 } from '@xyflow/react';
 
 import type { ArchNodeData } from '@/components/nodes/CustomArchNode';
+import type { FlowchartNodeData } from '@/components/nodes/FlowchartNode';
+import type { ERNodeData } from '@/components/nodes/ERNode';
+import type { SequenceNodeData } from '@/components/nodes/SequenceNode';
+import type { BPMNNodeData } from '@/components/nodes/BPMNNode';
+import type { DocumentNodeData } from '@/components/nodes/DocumentNode';
 
-export type ArchNode = Node<ArchNodeData, 'customArch'>;
+// Union of all possible node data types
+type AnyNodeData = ArchNodeData | FlowchartNodeData | ERNodeData | SequenceNodeData | BPMNNodeData | DocumentNodeData;
+
+// A diagram node can be any registered node type
+export type ArchNode = Node<AnyNodeData>;
 
 const initialNodes: ArchNode[] = [];
 const initialEdges: Edge[] = [];
@@ -55,7 +64,7 @@ type DiagramState = {
   setCurrentArchitectureId: (id: string | null) => void;
   setCurrentArchitectureTitle: (title: string) => void;
   resetDiagram: () => void;
-  updateNodeData: (id: string, data: Partial<ArchNodeData>) => void;
+  updateNodeData: (id: string, data: Partial<AnyNodeData>) => void;
   deleteNode: (nodeId: string) => void;
   updateEdge: (id: string, data: Partial<Edge>) => void;
   deleteEdge: (edgeId: string) => void;

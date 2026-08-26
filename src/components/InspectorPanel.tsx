@@ -45,11 +45,12 @@ export default function InspectorPanel() {
     setAiPrompt('');
     setAiError(null);
     if (selectedNode) {
-      setLabel(selectedNode.data.label || '');
-      setCategory(selectedNode.data.category || 'backend');
-      setDescription(selectedNode.data.description || '');
-      setPurpose(selectedNode.data.purpose || '');
-      setBottleneckRisk(selectedNode.data.bottleneckRisk || '');
+      const data = selectedNode.data as any;
+      setLabel(data.label || '');
+      setCategory(data.category || 'backend');
+      setDescription(data.description || '');
+      setPurpose(data.purpose || '');
+      setBottleneckRisk(data.bottleneckRisk || '');
     }
   }, [selectedNode?.id]);
 
@@ -75,7 +76,7 @@ export default function InspectorPanel() {
         
         <div className="p-4 flex flex-col gap-4">
           <div>
-             <h3 className="text-[10px] font-bold text-dim uppercase tracking-wider mb-2">Connection Type</h3>
+             <h3 className="text-[10px] font-bold text-muted/70 uppercase tracking-wider mb-2">Connection Type</h3>
              <div className="flex bg-surface-2/60 border border-border-c rounded-lg p-1">
                <button
                  onClick={() => updateEdge(selectedEdge.id, { animated: false })}
@@ -113,6 +114,8 @@ export default function InspectorPanel() {
 
   // Type assertion since selectedNode is guaranteed to be truthy below this point
   const node = selectedNode!;
+  // Node data is a union type — use `any` here since the panel handles missing fields gracefully
+  const nodeData = node.data as any;
 
   const isFailed = failedNodes.includes(node.id);
 
@@ -212,9 +215,9 @@ export default function InspectorPanel() {
       <div className="flex items-center justify-between p-4 border-b border-border-c bg-surface-2/50">
         {editMode === 'view' ? (
           <div>
-            <h2 className="text-fg font-semibold tracking-tight leading-snug">{node.data.label}</h2>
+            <h2 className="text-fg font-semibold tracking-tight leading-snug">{nodeData.label}</h2>
             <span className="text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 mt-1.5 inline-block capitalize">
-              {node.data.category}
+              {nodeData.category}
             </span>
           </div>
         ) : (
@@ -242,25 +245,25 @@ export default function InspectorPanel() {
       <div className="p-4 flex flex-col gap-4 overflow-y-auto max-h-[calc(100vh-16rem)]">
         {editMode === 'view' && (
           <>
-            {node.data.description && (
+            {nodeData.description && (
               <div>
-                <h3 className="text-[10px] font-bold text-dim uppercase tracking-wider mb-1">Description</h3>
-                <p className="text-muted leading-relaxed">{node.data.description}</p>
+                <h3 className="text-[10px] font-bold text-muted/70 uppercase tracking-wider mb-1">Description</h3>
+                <p className="text-muted leading-relaxed">{nodeData.description}</p>
               </div>
             )}
             
-            {node.data.purpose && (
+            {nodeData.purpose && (
               <div>
-                <h3 className="text-[10px] font-bold text-dim uppercase tracking-wider mb-1">Purpose</h3>
-                <p className="text-muted leading-relaxed">{node.data.purpose}</p>
+                <h3 className="text-[10px] font-bold text-muted/70 uppercase tracking-wider mb-1">Purpose</h3>
+                <p className="text-muted leading-relaxed">{nodeData.purpose}</p>
               </div>
             )}
             
-            {node.data.bottleneckRisk && (
+            {nodeData.bottleneckRisk && (
               <div>
                 <h3 className="text-[10px] font-bold text-red-400 uppercase tracking-wider mb-1">Bottleneck Risk</h3>
                 <p className="text-red-400/90 leading-relaxed bg-red-500/5 border border-red-500/10 p-2.5 rounded-lg mt-1 text-xs">
-                  {node.data.bottleneckRisk}
+                  {nodeData.bottleneckRisk}
                 </p>
               </div>
             )}
