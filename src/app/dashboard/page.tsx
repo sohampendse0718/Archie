@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/components/AuthProvider';
 import ProfileButton from '@/components/ProfileButton';
 import { Sparkles, Plus, Activity, Trash2, ArrowRight, Loader2, LayoutGrid, Clock, MoreVertical } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 type Architecture = {
   id: string;
@@ -85,14 +86,21 @@ export default function DashboardPage() {
   ).split(' ')[0];
 
   return (
-    <div className="min-h-screen bg-bg text-fg flex flex-col font-sans">
+    <div className="relative min-h-screen bg-[#09090b] text-fg flex flex-col font-sans overflow-hidden">
+      {/* ── Dynamic Background ── */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0d_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0d_1px,transparent_1px)] bg-[size:24px_24px] opacity-20" />
+        <div className="absolute top-0 -left-1/4 w-[800px] h-[800px] rounded-full bg-purple-600/20 blur-[120px]" />
+        <div className="absolute bottom-0 -right-1/4 w-[800px] h-[800px] rounded-full bg-blue-600/20 blur-[120px]" />
+      </div>
+
       {/* ── Header ── */}
-      <header className="sticky top-0 z-30 h-16 bg-surface/80 backdrop-blur-xl border-b border-border-c flex items-center justify-between px-6">
-        <div className="flex items-center gap-3">
+      <header className="sticky top-0 z-50 h-16 bg-[#0c0c10]/70 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-6">
+        <div className="flex items-center gap-3 relative z-10">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
             <Sparkles size={16} className="text-white" />
           </div>
-          <span className="font-semibold text-lg tracking-tight">Archie</span>
+          <span className="font-semibold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">Archie</span>
           <div className="h-4 w-px bg-border-c mx-2" />
           <span className="text-sm font-medium text-muted">Workspace</span>
         </div>
@@ -112,7 +120,7 @@ export default function DashboardPage() {
       </header>
 
       {/* ── Body ── */}
-      <main className="flex-1 w-full max-w-6xl mx-auto px-6 py-12">
+      <main className="relative z-10 flex-1 w-full max-w-6xl mx-auto px-6 py-12">
         {/* Page heading */}
         <div className="mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
@@ -130,12 +138,21 @@ export default function DashboardPage() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <motion.div 
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.1 } }
+            }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
             {/* New card */}
-            <button
+            <motion.button
+              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
               onClick={handleCreate}
               disabled={creating}
-              className="group h-48 rounded-2xl border-2 border-dashed border-border-c hover:border-accent hover:bg-accent/5 flex flex-col items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group h-48 rounded-2xl border-2 border-dashed border-border-c hover:bg-accent/5 flex flex-col items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_-5px_rgba(124,58,237,0.2)] hover:border-purple-500/30"
             >
               {creating ? (
                 <Loader2 size={24} className="animate-spin text-accent" />
@@ -145,7 +162,7 @@ export default function DashboardPage() {
                 </div>
               )}
               <span className="text-sm font-medium text-muted group-hover:text-accent transition-colors">Create new project</span>
-            </button>
+            </motion.button>
 
             {/* Architecture cards */}
             {architectures.map(arch => {
@@ -153,10 +170,11 @@ export default function DashboardPage() {
               const badge = getScoreBadge(arch.score);
 
               return (
-                <div
+                <motion.div
+                  variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
                   key={arch.id}
                   onClick={() => router.push(`/editor/${arch.id}`)}
-                  className="group relative h-48 bg-surface border border-border-c hover:border-accent/50 rounded-2xl p-5 flex flex-col transition-all cursor-pointer hover:shadow-xl hover:shadow-accent/5"
+                  className="group relative h-48 bg-surface border border-border-c rounded-2xl p-5 flex flex-col cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_-5px_rgba(124,58,237,0.2)] hover:border-purple-500/30"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1 pr-4">
@@ -188,18 +206,23 @@ export default function DashboardPage() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         )}
 
         {/* Empty state */}
         {!loading && architectures.length === 0 && (
-          <div className="text-center py-24 flex flex-col items-center">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-600/20 flex items-center justify-center mb-6">
-              <Sparkles size={28} className="text-accent" />
-            </div>
+          <div className="text-center py-24 flex flex-col items-center relative z-10">
+            <motion.div 
+              animate={{ y: [0, -10, 0] }} 
+              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+              className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-600/20 flex items-center justify-center mb-6"
+            >
+              <div className="absolute inset-0 bg-indigo-500/20 blur-xl rounded-full" />
+              <Sparkles size={28} className="text-accent relative z-10" />
+            </motion.div>
             <h3 className="text-xl font-bold mb-2">Ready to architect?</h3>
             <p className="text-muted max-w-md mx-auto mb-8">
               Start by creating your first architecture diagram. Use AI to generate complex systems or build them manually.
