@@ -95,14 +95,14 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Header ── */}
-      <header className="sticky top-0 z-50 h-16 bg-[#0c0c10]/70 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-6">
+      <header className="sticky top-0 z-50 h-[72px] px-6 bg-[#0c0c10]/80 backdrop-blur-xl border-b border-white/5 shadow-[0_8px_30px_rgb(0,0,0,0.4)] flex items-center justify-between">
         <div className="flex items-center gap-3 relative z-10">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
             <Sparkles size={16} className="text-white" />
           </div>
-          <span className="font-semibold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">Archie</span>
+          <span className="font-bold text-lg tracking-tight text-zinc-100">Archie</span>
           <div className="h-4 w-px bg-border-c mx-2" />
-          <span className="text-sm font-medium text-muted">Workspace</span>
+          <span className="font-mono text-sm text-zinc-500 tracking-wider uppercase">Workspace</span>
         </div>
 
         <div className="flex items-center gap-4">
@@ -110,7 +110,7 @@ export default function DashboardPage() {
             id="btn-new-architecture"
             onClick={handleCreate}
             disabled={creating}
-            className="flex items-center gap-2 px-4 py-2 bg-fg text-bg hover:opacity-90 rounded-xl text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+            className="flex items-center gap-2 px-4 py-2 bg-zinc-900/80 backdrop-blur-md border border-purple-500/30 text-zinc-100 hover:bg-purple-500/10 hover:border-purple-500/60 transition-all duration-300 shadow-[0_0_15px_-3px_rgba(168,85,247,0.15)] rounded-xl text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {creating ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
             New Project
