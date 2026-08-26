@@ -79,7 +79,26 @@ export default function LoginPage() {
   ];
 
   return (
-    <div className="min-h-screen w-full bg-[#09090b] flex overflow-hidden">
+    <div className="min-h-screen w-full bg-[#09090b] bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] flex overflow-hidden animate-fade-in">
+      {/* Schematic lines / nodes overlay */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-15">
+        <svg className="absolute w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <g stroke="currentColor" fill="none" strokeWidth="1.5" className="text-cyan-500/30">
+            <path d="M 400 300 L 600 300 L 600 500 L 800 500" strokeDasharray="4 4" />
+            <path d="M 600 500 L 600 700 L 400 700" strokeDasharray="4 4" />
+            <circle cx="400" cy="300" r="5" fill="currentColor" />
+            <circle cx="600" cy="500" r="5" fill="currentColor" />
+            <circle cx="800" cy="500" r="5" fill="currentColor" />
+            <circle cx="400" cy="700" r="5" fill="currentColor" />
+          </g>
+          <g stroke="currentColor" fill="none" strokeWidth="1" className="text-purple-500/30">
+            <path d="M 700 800 L 700 600 L 900 600" />
+            <circle cx="700" cy="800" r="4" fill="currentColor" />
+            <circle cx="900" cy="600" r="4" fill="currentColor" />
+          </g>
+        </svg>
+      </div>
+      
       {/* ── Left Panel: Branding ── */}
       <div className="hidden lg:flex flex-col justify-between w-[52%] p-14 relative overflow-hidden">
         {/* Subtle gradient orbs */}
@@ -90,32 +109,41 @@ export default function LoginPage() {
 
         {/* Logo */}
         <div className="relative z-10 flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.2)]">
+          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.2)] animate-pulse">
             <Sparkles className="w-5 h-5 text-blue-400" />
           </div>
-          <span className="text-zinc-100 font-semibold text-xl tracking-tight">Archie</span>
         </div>
 
         {/* Hero Text */}
-        <div className="relative z-10 space-y-6">
-          <div className="space-y-3">
-            <p className="text-xs font-semibold tracking-[0.2em] uppercase text-indigo-400">AI Architecture Studio</p>
-            <h1 className="text-5xl font-bold text-zinc-50 leading-[1.1] tracking-tight">
-              Design systems
-              <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-blue-400 to-cyan-400">
+        <div className="relative z-10 space-y-2 mt-auto mb-10">
+          {/* Massive ARCHIE Header */}
+          <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+            <h1 className="text-[100px] lg:text-[140px] font-black tracking-tighter leading-none bg-gradient-to-b from-slate-300 via-cyan-700 to-slate-400 bg-clip-text text-transparent">
+              ARCHIE
+            </h1>
+          </div>
+
+          <div className="animate-fade-in-up space-y-3" style={{ animationDelay: '300ms' }}>
+            <p className="text-xs font-mono font-semibold tracking-[0.2em] uppercase text-indigo-400">AI Architecture Studio</p>
+            <h2 className="text-5xl font-bold text-white leading-[1.1] tracking-tight">
+              Design systems{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
                 that scale.
               </span>
-            </h1>
-            <p className="text-zinc-400 text-lg leading-relaxed max-w-sm">
+            </h2>
+            <p className="text-zinc-400 text-lg leading-relaxed max-w-sm mt-4">
               Describe your product in plain English. Archie generates production-ready architecture diagrams with scoring and failure analysis.
             </p>
           </div>
 
           {/* Feature list */}
-          <div className="space-y-4 pt-2">
-            {features.map(({ icon: Icon, label, desc }) => (
-              <div key={label} className="flex items-start gap-4 group">
+          <div className="space-y-3 pt-6">
+            {features.map(({ icon: Icon, label, desc }, i) => (
+              <div 
+                key={label} 
+                className="flex items-start gap-4 group p-3.5 rounded-xl border border-white/5 bg-white/5 backdrop-blur-sm animate-fade-in-up hover:border-indigo-500/20 transition-colors"
+                style={{ animationDelay: `${400 + i * 100}ms` }}
+              >
                 <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-zinc-800/80 border border-zinc-700/50 flex items-center justify-center group-hover:border-indigo-500/40 group-hover:bg-indigo-500/5 transition-colors">
                   <Icon className="w-4 h-4 text-zinc-400 group-hover:text-indigo-400 transition-colors" />
                 </div>
@@ -129,7 +157,7 @@ export default function LoginPage() {
         </div>
 
         {/* Bottom tagline */}
-        <div className="relative z-10">
+        <div className="relative z-10 animate-fade-in-up" style={{ animationDelay: '800ms' }}>
           <p className="text-zinc-600 text-sm">
             &quot;Architecture is the art of how to waste space.&quot; — Philip Johnson
           </p>
@@ -139,13 +167,13 @@ export default function LoginPage() {
       {/* ── Right Panel: Auth Card ── */}
       <div className="flex-1 flex items-center justify-center p-6 lg:p-10 relative">
         {/* Subtle right-side glow */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-indigo-600/5 blur-[100px]" />
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-indigo-600/20 to-purple-600/20 blur-[120px]" />
         </div>
 
-        <div className="relative w-full max-w-[400px]">
+        <div className="relative w-full max-w-[400px] animate-fade-scale-in" style={{ animationDelay: '500ms' }}>
           {/* Card */}
-          <div className="relative bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
+          <div className="relative bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-8 shadow-[0_0_50px_-12px_rgba(79,70,229,0.15)] backdrop-blur-xl">
             {/* Animated gradient border */}
             <div className="absolute inset-0 rounded-2xl pointer-events-none overflow-hidden">
               <div className="absolute inset-[-1px] rounded-2xl bg-gradient-to-br from-indigo-500/20 via-transparent to-blue-500/20 opacity-60" />
@@ -153,10 +181,10 @@ export default function LoginPage() {
 
             {/* Mobile logo */}
             <div className="flex items-center gap-3 mb-7 lg:hidden">
-              <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20">
+              <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 animate-pulse">
                 <Sparkles className="w-4 h-4 text-blue-400" />
               </div>
-              <span className="text-zinc-100 font-semibold text-lg">Archie</span>
+              <span className="text-lg font-semibold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">Archie</span>
             </div>
 
             {/* Heading */}
@@ -189,7 +217,7 @@ export default function LoginPage() {
                 id="btn-google"
                 onClick={() => handleOAuth('google')}
                 disabled={loading !== null}
-                className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-zinc-800/60 hover:bg-zinc-800 border border-zinc-700/60 hover:border-zinc-600 rounded-xl text-zinc-200 text-sm font-medium transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed group"
+                className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-zinc-800/60 hover:bg-zinc-800 border border-zinc-700/60 hover:border-zinc-600 rounded-xl text-zinc-200 text-sm font-medium transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed group hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/10"
               >
                 {loading === 'google' ? (
                   <span className="w-4 h-4 border-2 border-zinc-500 border-t-zinc-200 rounded-full animate-spin" />
@@ -208,7 +236,7 @@ export default function LoginPage() {
                 id="btn-github"
                 onClick={() => handleOAuth('github')}
                 disabled={loading !== null}
-                className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-zinc-800/60 hover:bg-zinc-800 border border-zinc-700/60 hover:border-zinc-600 rounded-xl text-zinc-200 text-sm font-medium transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed group"
+                className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-zinc-800/60 hover:bg-zinc-800 border border-zinc-700/60 hover:border-zinc-600 rounded-xl text-zinc-200 text-sm font-medium transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed group hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/10"
               >
                 {loading === 'github' ? (
                   <span className="w-4 h-4 border-2 border-zinc-500 border-t-zinc-200 rounded-full animate-spin" />
@@ -283,7 +311,7 @@ export default function LoginPage() {
                 id="btn-email-submit"
                 type="submit"
                 disabled={loading !== null}
-                className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-white text-sm font-semibold tracking-wide transition-all duration-150 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:shadow-[0_0_30px_rgba(99,102,241,0.4)]"
+                className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-white text-sm font-semibold tracking-wide transition-all duration-150 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:shadow-[0_0_30px_rgba(99,102,241,0.4)] hover:-translate-y-0.5"
               >
                 {loading === 'email' ? (
                   <span className="w-4 h-4 border-2 border-indigo-300 border-t-white rounded-full animate-spin" />

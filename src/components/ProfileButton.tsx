@@ -70,12 +70,7 @@ export default function ProfileButton() {
         onClick={() => setOpen(o => !o)}
         aria-haspopup="true"
         aria-expanded={open}
-        style={{
-          display: 'flex', alignItems: 'center', gap: 8,
-          padding: '5px 10px 5px 5px',
-          background: 'var(--surface-2)', border: '1px solid var(--border-c)',
-          borderRadius: 10, cursor: 'pointer', fontFamily: 'inherit',
-        }}
+        className="flex items-center gap-2 py-1 pl-1 pr-2.5 bg-transparent hover:bg-white/5 border border-white/10 rounded-xl cursor-pointer transition-colors"
       >
         {/* Avatar */}
         <div style={{

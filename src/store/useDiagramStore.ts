@@ -26,6 +26,7 @@ type DiagramState = {
   nodes: ArchNode[];
   edges: Edge[];
   selectedNode: ArchNode | null;
+  selectedEdge: Edge | null;
   architectureScore: number | null;
   scoreReasoning: string | null;
   strengths: string[];
@@ -40,6 +41,7 @@ type DiagramState = {
   setNodes: (nodes: ArchNode[]) => void;
   setEdges: (edges: Edge[]) => void;
   setSelectedNode: (node: ArchNode | null) => void;
+  setSelectedEdge: (edge: Edge | null) => void;
   setArchitectureScore: (score: number | null) => void;
   setScoreReasoning: (reasoning: string | null) => void;
   setAnalysisDetails: (details: { strengths?: string[]; weaknesses?: string[]; tradeoffs?: string[] }) => void;
@@ -55,12 +57,15 @@ type DiagramState = {
   resetDiagram: () => void;
   updateNodeData: (id: string, data: Partial<ArchNodeData>) => void;
   deleteNode: (nodeId: string) => void;
+  updateEdge: (id: string, data: Partial<Edge>) => void;
+  deleteEdge: (edgeId: string) => void;
 };
 
 export const useDiagramStore = create<DiagramState>((set, get) => ({
   nodes: initialNodes,
   edges: initialEdges,
   selectedNode: null,
+  selectedEdge: null,
   architectureScore: null,
   scoreReasoning: null,
   strengths: [],
@@ -97,7 +102,8 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
   },
   setNodes: (nodes: ArchNode[]) => set({ nodes }),
   setEdges: (edges: Edge[]) => set({ edges }),
-  setSelectedNode: (node: ArchNode | null) => set({ selectedNode: node }),
+  setSelectedNode: (node: ArchNode | null) => set({ selectedNode: node, selectedEdge: null }),
+  setSelectedEdge: (edge: Edge | null) => set({ selectedEdge: edge, selectedNode: null }),
   setArchitectureScore: (score: number | null) => set({ architectureScore: score }),
   setScoreReasoning: (reasoning: string | null) => set({ scoreReasoning: reasoning }),
   setAnalysisDetails: (details) => set((state) => ({ 
@@ -113,6 +119,7 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
     nodes: [],
     edges: [],
     selectedNode: null,
+    selectedEdge: null,
     architectureScore: null,
     scoreReasoning: null,
     strengths: [],
@@ -141,13 +148,34 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
   deleteNode: (nodeId) => set((state) => {
     const newNodes = state.nodes.filter(n => n.id !== nodeId);
     const newEdges = state.edges.filter(e => e.source !== nodeId && e.target !== nodeId);
+    const edgeDeleted = state.selectedEdge && (state.selectedEdge.source === nodeId || state.selectedEdge.target === nodeId);
     
     return {
       nodes: newNodes,
       edges: newEdges,
       selectedNode: state.selectedNode?.id === nodeId ? null : state.selectedNode,
+      selectedEdge: edgeDeleted ? null : state.selectedEdge,
     };
   }),
+  updateEdge: (id, data) => set((state) => {
+    const updatedEdges = state.edges.map((edge) => 
+      edge.id === id 
+        ? { ...edge, ...data } 
+        : edge
+    );
+    const updatedSelectedEdge = state.selectedEdge && state.selectedEdge.id === id
+      ? { ...state.selectedEdge, ...data }
+      : state.selectedEdge;
+    
+    return {
+      edges: updatedEdges,
+      selectedEdge: updatedSelectedEdge,
+    };
+  }),
+  deleteEdge: (edgeId) => set((state) => ({
+    edges: state.edges.filter(e => e.id !== edgeId),
+    selectedEdge: state.selectedEdge?.id === edgeId ? null : state.selectedEdge,
+  })),
   applyAutoLayout: (direction = 'TB') => {
     const { nodes, edges } = getLayoutedElements(get().nodes, get().edges, direction);
     set({ nodes, edges });

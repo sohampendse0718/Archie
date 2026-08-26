@@ -6,11 +6,15 @@ import { useState, useEffect } from 'react';
 
 export default function InspectorPanel() {
   const selectedNode = useDiagramStore(state => state.selectedNode);
+  const selectedEdge = useDiagramStore(state => state.selectedEdge);
   const setSelectedNode = useDiagramStore(state => state.setSelectedNode);
+  const setSelectedEdge = useDiagramStore(state => state.setSelectedEdge);
   const failedNodes = useDiagramStore(state => state.failedNodes);
   const toggleNodeOutage = useDiagramStore(state => state.toggleNodeOutage);
   const updateNodeData = useDiagramStore(state => state.updateNodeData);
   const deleteNode = useDiagramStore(state => state.deleteNode);
+  const updateEdge = useDiagramStore(state => state.updateEdge);
+  const deleteEdge = useDiagramStore(state => state.deleteEdge);
   
   const nodes = useDiagramStore(state => state.nodes);
   const edges = useDiagramStore(state => state.edges);
@@ -49,13 +53,72 @@ export default function InspectorPanel() {
     }
   }, [selectedNode?.id]);
 
-  if (!selectedNode) return null;
+  if (!selectedNode && !selectedEdge) return null;
 
-  const isFailed = failedNodes.includes(selectedNode.id);
+  if (selectedEdge) {
+    return (
+      <div className="absolute right-4 top-20 w-80 bg-surface/95 backdrop-blur-xl border border-border-c rounded-xl shadow-2xl z-20 flex flex-col overflow-hidden text-sm transition-all duration-300">
+        <div className="flex items-center justify-between p-4 border-b border-border-c bg-surface-2/50">
+          <div>
+            <h2 className="text-fg font-semibold tracking-tight leading-snug">Connection (Wire)</h2>
+            <span className="text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 mt-1.5 inline-block capitalize">
+              {selectedEdge.animated ? 'Async' : 'Sync'}
+            </span>
+          </div>
+          <button 
+            onClick={() => setSelectedEdge(null)}
+            className="text-muted hover:text-fg hover:bg-surface-2 p-1.5 rounded-lg transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+        
+        <div className="p-4 flex flex-col gap-4">
+          <div>
+             <h3 className="text-[10px] font-bold text-dim uppercase tracking-wider mb-2">Connection Type</h3>
+             <div className="flex bg-zinc-900/60 border border-zinc-800 rounded-lg p-1">
+               <button
+                 onClick={() => updateEdge(selectedEdge.id, { animated: false })}
+                 className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors ${!selectedEdge.animated ? 'bg-indigo-600 text-white shadow-sm' : 'text-zinc-400 hover:text-zinc-200'}`}
+               >
+                 Synchronous
+               </button>
+               <button
+                 onClick={() => updateEdge(selectedEdge.id, { animated: true })}
+                 className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors ${selectedEdge.animated ? 'bg-indigo-600 text-white shadow-sm' : 'text-zinc-400 hover:text-zinc-200'}`}
+               >
+                 Asynchronous
+               </button>
+             </div>
+             <p className="text-[10px] text-muted mt-2">
+               {selectedEdge.animated 
+                 ? "Asynchronous calls don't block the caller (e.g., event queues, pub/sub)."
+                 : "Synchronous calls block the caller until a response is received (e.g., REST, gRPC)."}
+             </p>
+          </div>
+
+          <div className="pt-2 border-t border-border-c/50 mt-2">
+            <button
+              onClick={() => deleteEdge(selectedEdge.id)}
+              className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 hover:border-rose-500/45 rounded-lg text-rose-400 hover:text-rose-300 font-medium text-xs transition-colors"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              Delete Connection
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Type assertion since selectedNode is guaranteed to be truthy below this point
+  const node = selectedNode!;
+
+  const isFailed = failedNodes.includes(node.id);
 
   const handleManualSave = (e: React.FormEvent) => {
     e.preventDefault();
-    updateNodeData(selectedNode.id, {
+    updateNodeData(node.id, {
       label,
       category,
       description,
@@ -79,7 +142,7 @@ export default function InspectorPanel() {
         body: JSON.stringify({
           nodes,
           edges,
-          focusedNodeId: selectedNode.id,
+          focusedNodeId: node.id,
           instruction: aiPrompt,
         }),
       });
@@ -127,7 +190,7 @@ export default function InspectorPanel() {
       applyAutoLayout('TB');
 
       // Check if our currently selected node still exists in updated list
-      const updatedNode = reactFlowNodes.find((n: any) => n.id === selectedNode.id);
+      const updatedNode = reactFlowNodes.find((n: any) => n.id === node.id);
       if (updatedNode) {
         setSelectedNode(updatedNode);
       } else {
@@ -149,9 +212,9 @@ export default function InspectorPanel() {
       <div className="flex items-center justify-between p-4 border-b border-border-c bg-surface-2/50">
         {editMode === 'view' ? (
           <div>
-            <h2 className="text-fg font-semibold tracking-tight leading-snug">{selectedNode.data.label}</h2>
+            <h2 className="text-fg font-semibold tracking-tight leading-snug">{node.data.label}</h2>
             <span className="text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 mt-1.5 inline-block capitalize">
-              {selectedNode.data.category}
+              {node.data.category}
             </span>
           </div>
         ) : (
@@ -179,25 +242,25 @@ export default function InspectorPanel() {
       <div className="p-4 flex flex-col gap-4 overflow-y-auto max-h-[calc(100vh-16rem)]">
         {editMode === 'view' && (
           <>
-            {selectedNode.data.description && (
+            {node.data.description && (
               <div>
                 <h3 className="text-[10px] font-bold text-dim uppercase tracking-wider mb-1">Description</h3>
-                <p className="text-muted leading-relaxed">{selectedNode.data.description}</p>
+                <p className="text-muted leading-relaxed">{node.data.description}</p>
               </div>
             )}
             
-            {selectedNode.data.purpose && (
+            {node.data.purpose && (
               <div>
                 <h3 className="text-[10px] font-bold text-dim uppercase tracking-wider mb-1">Purpose</h3>
-                <p className="text-muted leading-relaxed">{selectedNode.data.purpose}</p>
+                <p className="text-muted leading-relaxed">{node.data.purpose}</p>
               </div>
             )}
             
-            {selectedNode.data.bottleneckRisk && (
+            {node.data.bottleneckRisk && (
               <div>
                 <h3 className="text-[10px] font-bold text-red-400 uppercase tracking-wider mb-1">Bottleneck Risk</h3>
                 <p className="text-red-400/90 leading-relaxed bg-red-500/5 border border-red-500/10 p-2.5 rounded-lg mt-1 text-xs">
-                  {selectedNode.data.bottleneckRisk}
+                  {node.data.bottleneckRisk}
                 </p>
               </div>
             )}
@@ -219,7 +282,7 @@ export default function InspectorPanel() {
                 AI Fix
               </button>
               <button
-                onClick={() => deleteNode(selectedNode.id)}
+                onClick={() => deleteNode(node.id)}
                 className="flex items-center justify-center py-2 px-3 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 hover:border-rose-500/45 rounded-lg text-rose-400 hover:text-rose-300 font-medium text-xs transition-colors"
                 title="Delete Component"
               >
@@ -368,7 +431,7 @@ export default function InspectorPanel() {
       {editMode === 'view' && (
         <div className="p-4 border-t border-border-c bg-surface-2/50">
           <button
-            onClick={() => toggleNodeOutage(selectedNode.id)}
+            onClick={() => toggleNodeOutage(node.id)}
             className={`w-full py-2.5 px-4 rounded-lg font-medium flex items-center justify-center gap-2 transition-all duration-200 ${
               isFailed
                 ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 hover:bg-emerald-500/20'

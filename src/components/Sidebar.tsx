@@ -18,7 +18,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="absolute left-4 top-20 w-56 bg-surface/95 backdrop-blur-xl border border-border-c rounded-xl shadow-2xl z-20 flex flex-col overflow-hidden text-sm transition-all duration-300">
+    <aside className="w-56 bg-surface/95 backdrop-blur-xl border border-border-c rounded-xl shadow-2xl flex flex-col overflow-hidden text-sm transition-all duration-300">
       <div className="p-4 border-b border-border-c bg-surface-2/50">
         <h2 className="text-fg font-semibold tracking-tight">Components</h2>
         <p className="text-[11px] text-muted mt-0.5">Drag and drop to build</p>

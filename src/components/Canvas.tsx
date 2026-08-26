@@ -26,7 +26,7 @@ const defaultEdgeOptions = {
 };
 
 function CanvasInner() {
-  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, setSelectedNode, failedNodes, degradedNodes, setNodes } = useDiagramStore();
+  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, setSelectedNode, setSelectedEdge, failedNodes, degradedNodes, setNodes } = useDiagramStore();
   const { zoomIn, zoomOut, fitView, screenToFlowPosition } = useReactFlow();
   const { theme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -144,7 +144,11 @@ function CanvasInner() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeClick={(_, node) => setSelectedNode(node as ArchNode)}
-        onPaneClick={() => setSelectedNode(null)}
+        onEdgeClick={(_, edge) => setSelectedEdge(edge)}
+        onPaneClick={() => {
+          setSelectedNode(null);
+          setSelectedEdge(null);
+        }}
         onDrop={onDrop}
         onDragOver={onDragOver}
         nodeTypes={nodeTypes}
@@ -163,11 +167,7 @@ function CanvasInner() {
           color={theme === 'dark' ? '#27272a' : '#d4d4d8'} 
         />
         
-        <Controls 
-          className="!bg-surface/80 !border-border-c !shadow-xl backdrop-blur-md !rounded-xl !overflow-hidden [&>button]:!bg-transparent [&>button]:!border-border-c [&>button]:!border-b [&>button]:last:!border-b-0 [&>button]:!text-muted hover:[&>button]:!text-fg hover:[&>button]:!bg-surface-2 [&>button]:!transition-colors"
-          showInteractive={false}
-          position="bottom-left"
-        />
+
         
         <MiniMap 
           className="!bg-surface/90 !border !border-border-c !shadow-xl backdrop-blur-xl !rounded-xl !overflow-hidden"
@@ -191,9 +191,9 @@ function CanvasInner() {
 
 export default function Canvas() {
   return (
-    <ReactFlowProvider>
+    <>
       <CanvasInner />
       <ExportModal />
-    </ReactFlowProvider>
+    </>
   );
 }
