@@ -11,6 +11,7 @@ import ProfileButton from '@/components/ProfileButton';
 import EdgeLegend from '@/components/EdgeLegend';
 import { Save, Download, Sparkles, Layout, Activity, ArrowLeft, Check, Loader2 } from 'lucide-react';
 import { useDiagramStore } from '@/store/useDiagramStore';
+import { useSettingsStore } from '@/store/useSettingsStore';
 import { createClient } from '@/lib/supabase/client';
 import { ReactFlowProvider, Controls } from '@xyflow/react';
 
@@ -19,6 +20,7 @@ export default function EditorPage() {
   const id = params?.id as string;
   const router = useRouter();
   const supabase = createClient();
+  const { isAutosaveEnabled } = useSettingsStore();
 
   const {
     applyAutoLayout,
@@ -98,6 +100,7 @@ export default function EditorPage() {
   // Auto-save (debounced 2s) when nodes/edges/score change
   useEffect(() => {
     if (isInitialLoad.current || !id) return;
+    if (!isAutosaveEnabled) return;
 
     if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
     autoSaveTimer.current = setTimeout(async () => {
@@ -108,7 +111,7 @@ export default function EditorPage() {
       if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodes, edges, architectureScore]);
+  }, [nodes, edges, architectureScore, isAutosaveEnabled]);
 
   const saveToDb = useCallback(async (manual = false) => {
     if (!id) return;
@@ -211,24 +214,26 @@ export default function EditorPage() {
             <span className="hidden sm:inline">Export</span>
           </button>
 
-          <button
-            onClick={() => saveToDb(true)}
-            disabled={saving}
-            className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg border transition-all shadow-sm ${
-              saveStatus === 'saved'
-                ? 'text-green-500 border-green-500/30 bg-green-500/10'
-                : 'text-muted bg-surface-2 hover:bg-surface hover:text-fg border-border-c'
-            }`}
-          >
-            {saving ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : saveStatus === 'saved' ? (
-              <Check className="w-4 h-4" />
-            ) : (
-              <Save className="w-4 h-4" />
-            )}
-            <span className="hidden sm:inline">{saveStatus === 'saved' ? 'Saved' : 'Save'}</span>
-          </button>
+          {!isAutosaveEnabled && (
+            <button
+              onClick={() => saveToDb(true)}
+              disabled={saving}
+              className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg border transition-all shadow-sm ${
+                saveStatus === 'saved'
+                  ? 'text-green-500 border-green-500/30 bg-green-500/10'
+                  : 'text-muted bg-surface-2 hover:bg-surface hover:text-fg border-border-c'
+              }`}
+            >
+              {saving ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : saveStatus === 'saved' ? (
+                <Check className="w-4 h-4" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              <span className="hidden sm:inline">{saveStatus === 'saved' ? 'Saved' : 'Save'}</span>
+            </button>
+          )}
 
           {architectureScore !== null && (
             <div

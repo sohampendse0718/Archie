@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthProvider';
 import { useTheme } from '@/components/ThemeProvider';
 import { ArrowLeft, LogOut, Sun, Moon, Sparkles, Mail, Shield } from 'lucide-react';
+import { useSettingsStore } from '@/store/useSettingsStore';
 import { useState } from 'react';
 
 function getInitials(name?: string | null, email?: string | null): string {
@@ -21,6 +22,7 @@ export default function ProfilePage() {
   const { theme, setTheme } = useTheme();
   const router = useRouter();
   const [signingOut, setSigningOut] = useState(false);
+  const { isAutosaveEnabled, setIsAutosaveEnabled } = useSettingsStore();
 
   const displayName =
     user?.user_metadata?.full_name ||
@@ -160,6 +162,36 @@ export default function ProfilePage() {
                   {t.charAt(0).toUpperCase() + t.slice(1)}
                 </button>
               ))}
+            </div>
+          </div>
+        </div>
+
+
+        {/* Preferences card */}
+        <div style={card}>
+          <div style={sectionHead}><Shield size={12} /> Preferences</div>
+          <div style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+            <div>
+              <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--fg)', margin: 0 }}>Autosave</p>
+              <p style={{ fontSize: 12, color: 'var(--muted)', margin: '3px 0 0' }}>Automatically save diagram changes</p>
+            </div>
+            {/* Custom Toggle Switch */}
+            <div
+              onClick={() => setIsAutosaveEnabled(!isAutosaveEnabled)}
+              style={{
+                width: 44, height: 24, borderRadius: 12,
+                background: isAutosaveEnabled ? '#818cf8' : 'var(--surface-2)',
+                border: '1px solid var(--border-c)',
+                cursor: 'pointer', position: 'relative',
+                transition: 'background 0.2s',
+              }}
+            >
+              <div style={{
+                position: 'absolute', top: 2, left: isAutosaveEnabled ? 22 : 2,
+                width: 18, height: 18, borderRadius: 9,
+                background: '#fff', boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                transition: 'left 0.2s',
+              }} />
             </div>
           </div>
         </div>
