@@ -96,7 +96,7 @@ export default function DashboardPage() {
   ).split(' ')[0];
 
   return (
-    <div className="relative min-h-screen bg-bg text-fg flex flex-col font-sans overflow-hidden">
+    <div className="relative min-h-screen bg-bg text-fg flex flex-col font-sans overflow-y-auto overflow-x-hidden">
       {/* ── Dynamic Background ── */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0d_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0d_1px,transparent_1px)] bg-[size:24px_24px] opacity-20" />
@@ -105,7 +105,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Header ── */}
-      <header className="sticky top-0 z-50 h-[72px] px-6 bg-surface/80 backdrop-blur-xl border-b border-border-c shadow-[0_8px_30px_rgb(0,0,0,0.4)] flex items-center justify-between">
+      <header className="shrink-0 sticky top-0 z-50 h-[72px] px-6 bg-surface/80 backdrop-blur-xl border-b border-border-c shadow-[0_8px_30px_rgb(0,0,0,0.4)] flex items-center justify-between">
         <div className="flex items-center gap-3 relative z-10">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
             <Sparkles size={16} className="text-white" />
@@ -130,7 +130,7 @@ export default function DashboardPage() {
       </header>
 
       {/* ── Body ── */}
-      <main className="relative z-10 flex-1 w-full max-w-6xl mx-auto px-6 py-12">
+      <main className="relative z-10 flex-1 w-full max-w-6xl mx-auto px-6 pt-12 pb-24">
         {/* Page heading */}
         <div className="mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
