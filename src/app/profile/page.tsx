@@ -43,87 +43,55 @@ export default function ProfilePage() {
     router.refresh();
   };
 
-  const card: React.CSSProperties = {
-    background: 'var(--surface)',
-    border: '1px solid var(--border-c)',
-    borderRadius: 14,
-    overflow: 'hidden',
-  };
-  const sectionHead: React.CSSProperties = {
-    padding: '12px 20px',
-    borderBottom: '1px solid var(--border-c)',
-    fontSize: 11,
-    fontWeight: 600,
-    letterSpacing: '0.08em',
-    textTransform: 'uppercase',
-    color: 'var(--muted)',
-    display: 'flex',
-    alignItems: 'center',
-    gap: 6,
-  };
+  const sectionHeadClass = "px-5 py-3 border-b border-white/5 text-[11px] font-semibold tracking-[0.08em] uppercase text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5";
+  const cardClass = "bg-white/60 dark:bg-zinc-900/40 backdrop-blur-xl border border-zinc-200/50 dark:border-white/5 hover:border-purple-400 dark:hover:border-purple-500/30 transition-all duration-300 shadow-lg shadow-zinc-200/50 dark:shadow-xl dark:shadow-none rounded-[14px] overflow-hidden relative z-10 flex flex-col";
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--fg)', fontFamily: 'inherit', display: 'flex', flexDirection: 'column' }}>
+    <div className="relative min-h-screen bg-bg text-fg flex flex-col font-sans overflow-y-auto overflow-x-hidden no-scrollbar">
+      {/* ── Dynamic Background ── */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0d_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0d_1px,transparent_1px)] bg-[size:24px_24px] opacity-20" />
+        <div className="absolute top-0 -left-1/4 w-[800px] h-[800px] rounded-full bg-purple-600/20 blur-[120px]" />
+        <div className="absolute bottom-0 -right-1/4 w-[800px] h-[800px] rounded-full bg-blue-600/20 blur-[120px]" />
+      </div>
 
       {/* Header */}
-      <header style={{
-        position: 'sticky', top: 0, zIndex: 30, height: 56,
-        background: 'var(--surface)', borderBottom: '1px solid var(--border-c)',
-        display: 'flex', alignItems: 'center', gap: 12, padding: '0 24px',
-      }}>
-        <button
-          onClick={() => router.back()}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            padding: '6px 12px', background: 'none',
-            border: '1px solid var(--border-c)', borderRadius: 8,
-            fontSize: 13, fontWeight: 500, color: 'var(--muted)',
-            cursor: 'pointer', fontFamily: 'inherit',
-          }}
-        >
-          <ArrowLeft size={14} /> Back
-        </button>
-        <div style={{ width: 1, height: 18, background: 'var(--border-c)' }} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{
-            width: 28, height: 28, borderRadius: 7,
-            background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.25)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <Sparkles size={13} color="#818cf8" />
+      <header className="shrink-0 sticky top-0 z-50 h-[72px] px-6 bg-surface/80 backdrop-blur-xl border-b border-border-c shadow-[0_8px_30px_rgb(0,0,0,0.4)] flex items-center justify-between">
+        <div className="flex items-center gap-3 relative z-10">
+          <button
+            onClick={() => router.back()}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-transparent border border-border-c rounded-lg text-[13px] font-medium text-muted hover:text-fg hover:bg-surface-2 transition-colors cursor-pointer"
+          >
+            <ArrowLeft size={14} /> Back
+          </button>
+          <div className="w-px h-[18px] bg-border-c mx-1" />
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-md bg-indigo-500/12 border border-indigo-500/25 flex items-center justify-center">
+              <Sparkles size={13} className="text-indigo-400" />
+            </div>
+            <span className="text-sm font-semibold text-fg">Settings</span>
           </div>
-          <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--fg)' }}>Settings</span>
         </div>
       </header>
 
       {/* Body */}
-      <main style={{ flex: 1, maxWidth: 520, width: '100%', margin: '0 auto', padding: '36px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <main className="flex-1 w-full max-w-[520px] mx-auto px-6 py-9 flex flex-col gap-4 relative z-10">
 
         {/* Account card */}
-        <div style={card}>
-          <div style={sectionHead}><Shield size={12} /> Account</div>
-          <div style={{ padding: '20px', display: 'flex', alignItems: 'center', gap: 16 }}>
-            <div style={{
-              width: 60, height: 60, borderRadius: 14, overflow: 'hidden', flexShrink: 0,
-              border: '1px solid var(--border-c)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: 'rgba(99,102,241,0.12)', fontSize: 20, fontWeight: 700, color: '#818cf8',
-            }}>
+        <div className={cardClass}>
+          <div className={sectionHeadClass}><Shield size={12} /> Account</div>
+          <div className="p-5 flex items-center gap-4">
+            <div className="w-[60px] h-[60px] rounded-[14px] overflow-hidden shrink-0 border border-white/10 flex items-center justify-center bg-gradient-to-br from-indigo-500/20 to-purple-500/20 shadow-[inset_0_2px_10px_rgba(255,255,255,0.1)] text-indigo-400 font-bold text-xl">
               {avatarUrl
-                ? <img src={avatarUrl} alt={displayName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ? <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover" />
                 : initials}
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
-              <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--fg)' }}>{displayName}</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--muted)' }}>
+            <div className="flex flex-col gap-1 min-w-0">
+              <span className="text-base font-bold text-zinc-900 dark:text-zinc-100">{displayName}</span>
+              <span className="flex items-center gap-1.5 text-[13px] text-zinc-500 dark:text-zinc-400">
                 <Mail size={12} /> {email}
               </span>
-              <span style={{
-                display: 'inline-flex', alignItems: 'center', width: 'fit-content',
-                padding: '2px 8px', borderRadius: 6, marginTop: 2,
-                background: 'var(--surface-2)', border: '1px solid var(--border-c)',
-                fontSize: 11, fontWeight: 500, color: 'var(--muted)',
-              }}>
+              <span className="inline-flex items-center w-fit px-2 py-0.5 rounded-md mt-0.5 bg-surface-2 border border-border-c text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
                 via {providerLabel}
               </span>
             </div>
@@ -131,32 +99,25 @@ export default function ProfilePage() {
         </div>
 
         {/* Appearance card */}
-        <div style={card}>
-          <div style={sectionHead}><Sun size={12} /> Appearance</div>
-          <div style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+        <div className={cardClass}>
+          <div className={sectionHeadClass}><Sun size={12} /> Appearance</div>
+          <div className="px-5 py-4 flex items-center justify-between gap-3">
             <div>
-              <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--fg)', margin: 0 }}>Theme</p>
-              <p style={{ fontSize: 12, color: 'var(--muted)', margin: '3px 0 0' }}>Changes all pages instantly</p>
+              <p className="text-[13px] font-semibold text-zinc-900 dark:text-zinc-100 m-0">Theme</p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-[3px] mb-0">Changes all pages instantly</p>
             </div>
             {/* Toggle */}
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: 4,
-              background: 'var(--surface-2)', border: '1px solid var(--border-c)',
-              borderRadius: 10, padding: 4,
-            }}>
+            <div className="flex items-center gap-1 bg-surface-2 border border-border-c rounded-[10px] p-1">
               {(['dark', 'light'] as const).map(t => (
                 <button
                   key={t}
                   id={`btn-theme-${t}`}
                   onClick={() => setTheme(t)}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 6,
-                    padding: '6px 12px', borderRadius: 7, border: 'none',
-                    fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
-                    background: theme === t ? (t === 'dark' ? '#27272a' : '#fff') : 'transparent',
-                    color: theme === t ? (t === 'dark' ? '#e4e4e7' : '#18181b') : 'var(--muted)',
-                    boxShadow: theme === t ? '0 1px 3px rgba(0,0,0,0.15)' : 'none',
-                  }}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[7px] border-none text-xs font-semibold cursor-pointer transition-all duration-200 ${
+                    theme === t 
+                      ? (t === 'dark' ? 'bg-[#27272a] text-[#e4e4e7] shadow-[0_1px_3px_rgba(0,0,0,0.15)]' : 'bg-white text-[#18181b] shadow-[0_1px_3px_rgba(0,0,0,0.15)]') 
+                      : 'bg-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
+                  }`}
                 >
                   {t === 'dark' ? <Moon size={13} /> : <Sun size={13} />}
                   {t.charAt(0).toUpperCase() + t.slice(1)}
@@ -168,53 +129,36 @@ export default function ProfilePage() {
 
 
         {/* Preferences card */}
-        <div style={card}>
-          <div style={sectionHead}><Shield size={12} /> Preferences</div>
-          <div style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+        <div className={cardClass}>
+          <div className={sectionHeadClass}><Shield size={12} /> Preferences</div>
+          <div className="px-5 py-4 flex items-center justify-between gap-3">
             <div>
-              <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--fg)', margin: 0 }}>Autosave</p>
-              <p style={{ fontSize: 12, color: 'var(--muted)', margin: '3px 0 0' }}>Automatically save diagram changes</p>
+              <p className="text-[13px] font-semibold text-zinc-900 dark:text-zinc-100 m-0">Autosave</p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-[3px] mb-0">Automatically save diagram changes</p>
             </div>
             {/* Custom Toggle Switch */}
             <div
               onClick={() => setIsAutosaveEnabled(!isAutosaveEnabled)}
-              style={{
-                width: 44, height: 24, borderRadius: 12,
-                background: isAutosaveEnabled ? '#818cf8' : 'var(--surface-2)',
-                border: '1px solid var(--border-c)',
-                cursor: 'pointer', position: 'relative',
-                transition: 'background 0.2s',
-              }}
+              className={`w-11 h-6 rounded-full border border-border-c cursor-pointer relative transition-colors duration-200 ${isAutosaveEnabled ? 'bg-indigo-400' : 'bg-surface-2'}`}
             >
-              <div style={{
-                position: 'absolute', top: 2, left: isAutosaveEnabled ? 22 : 2,
-                width: 18, height: 18, borderRadius: 9,
-                background: '#fff', boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-                transition: 'left 0.2s',
-              }} />
+              <div className={`absolute top-[2px] w-[18px] h-[18px] rounded-full bg-white shadow-[0_1px_3px_rgba(0,0,0,0.2)] transition-all duration-200 ${isAutosaveEnabled ? 'left-[22px]' : 'left-[2px]'}`} />
             </div>
           </div>
         </div>
 
         {/* Sign out card */}
-        <div style={card}>
-          <div style={sectionHead} ><LogOut size={12} style={{ color: '#f87171' }} /><span style={{ color: '#f87171' }}>Session</span></div>
-          <div style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div className={cardClass}>
+          <div className={sectionHeadClass}><LogOut size={12} className="text-red-600 dark:text-red-400" /><span className="text-red-600 dark:text-red-400">Session</span></div>
+          <div className="px-5 py-4 flex items-center justify-between">
             <div>
-              <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--fg)', margin: 0 }}>Sign out</p>
-              <p style={{ fontSize: 12, color: 'var(--muted)', margin: '3px 0 0' }}>Redirects to login page</p>
+              <p className="text-[13px] font-semibold text-zinc-900 dark:text-zinc-100 m-0">Sign out</p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-[3px] mb-0">Redirects to login page</p>
             </div>
             <button
               id="btn-profile-signout"
               onClick={handleSignOut}
               disabled={signingOut}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 7,
-                padding: '8px 16px', borderRadius: 9, border: '1px solid rgba(248,113,113,0.3)',
-                background: 'rgba(248,113,113,0.08)', color: '#f87171',
-                fontSize: 13, fontWeight: 600, cursor: signingOut ? 'not-allowed' : 'pointer',
-                opacity: signingOut ? 0.6 : 1, fontFamily: 'inherit',
-              }}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-red-500/20 bg-transparent text-red-600 dark:text-red-400 text-[13px] font-semibold cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed hover:bg-red-50 dark:hover:bg-red-500/10 hover:border-red-500/50 transition-colors"
             >
               <LogOut size={13} /> Sign out
             </button>
