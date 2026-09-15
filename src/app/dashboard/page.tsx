@@ -96,7 +96,7 @@ export default function DashboardPage() {
   ).split(' ')[0];
 
   return (
-    <div className="relative min-h-screen bg-bg text-fg flex flex-col font-sans overflow-y-auto overflow-x-hidden">
+    <div className="relative min-h-screen bg-bg text-fg flex flex-col font-sans overflow-y-auto overflow-x-hidden no-scrollbar">
       {/* ── Dynamic Background ── */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0d_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0d_1px,transparent_1px)] bg-[size:24px_24px] opacity-20" />
