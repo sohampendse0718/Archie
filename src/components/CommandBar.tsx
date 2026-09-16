@@ -1,6 +1,6 @@
 "use client";
 
-import { SendHorizontal, Loader2, Paperclip, X } from 'lucide-react';
+import { SendHorizontal, Loader2, Paperclip, X, Mic, Square } from 'lucide-react';
 import { useRef, useEffect, useState } from 'react';
 import { useDiagramStore } from '@/store/useDiagramStore';
 import DiagramTypeSelector, { DIAGRAM_TYPES, DiagramType } from './DiagramTypeSelector';
@@ -8,7 +8,9 @@ import DiagramTypeSelector, { DIAGRAM_TYPES, DiagramType } from './DiagramTypeSe
 export default function CommandBar() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const recognitionRef = useRef<any>(null);
   const [inputValue, setInputValue] = useState('');
+  const [isRecording, setIsRecording] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -62,8 +64,62 @@ export default function CommandBar() {
     setTimeout(() => textareaRef.current?.focus(), 50);
   };
 
+  const toggleRecording = () => {
+    if (isRecording) {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+      setIsRecording(false);
+      return;
+    }
+
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Speech recognition is not supported in this browser.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    let startValue = inputValue;
+
+    recognition.onresult = (event: any) => {
+      let finalTranscript = '';
+      let interimTranscript = '';
+      
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        } else {
+          interimTranscript += event.results[i][0].transcript;
+        }
+      }
+      
+      if (finalTranscript) {
+        startValue = startValue + (startValue && !startValue.endsWith(' ') ? ' ' : '') + finalTranscript.trim();
+        setInputValue(startValue + (interimTranscript ? ' ' + interimTranscript : ''));
+      } else {
+        setInputValue(startValue + (startValue && !startValue.endsWith(' ') && interimTranscript ? ' ' : '') + interimTranscript);
+      }
+    };
+
+    recognition.onend = () => {
+      setIsRecording(false);
+    };
+
+    recognitionRef.current = recognition;
+    recognition.start();
+    setIsRecording(true);
+  };
+
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    if (isRecording) {
+      if (recognitionRef.current) recognitionRef.current.stop();
+      setIsRecording(false);
+    }
     if (!inputValue.trim() || isGenerating) return;
 
     setIsGenerating(true);
@@ -192,7 +248,7 @@ export default function CommandBar() {
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className={`bg-surface/90 backdrop-blur-md border ${isDragging ? 'border-purple-500 bg-purple-500/5' : 'border-border-c'} rounded-2xl p-2 shadow-2xl flex flex-col gap-2 focus-within:border-accent transition-colors`}
+          className={`bg-surface/90 backdrop-blur-md border ${isDragging ? 'border-purple-500 bg-purple-500/5' : isRecording ? 'border-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.4)]' : 'border-border-c'} rounded-2xl p-2 shadow-2xl flex flex-col gap-2 focus-within:border-accent transition-colors`}
         >
           {(TypePill || files.length > 0) && (
             <div className="flex flex-wrap items-center gap-2 px-2 pt-1">
@@ -239,18 +295,36 @@ export default function CommandBar() {
               rows={1}
               style={{ scrollbarWidth: 'none' }}
             />
-            <button
-              type="submit"
-              disabled={(!inputValue.trim() && files.length === 0) || isGenerating}
-              className="p-3 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-600/50 disabled:cursor-not-allowed text-white rounded-xl shadow-lg hover:shadow-[0_0_15px_rgba(79,70,229,0.5)] transition-all shrink-0 flex items-center justify-center mb-0.5 mr-0.5 group"
-              title="Generate"
-            >
-              {isGenerating ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : (
-                <SendHorizontal className="w-5 h-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              )}
-            </button>
+            <div className="flex items-center gap-2 mb-0.5 mr-0.5 shrink-0">
+              <button
+                type="button"
+                onClick={toggleRecording}
+                className={`p-2 shrink-0 flex items-center justify-center transition-all ${
+                  isRecording 
+                    ? 'bg-zinc-800 rounded-full hover:bg-zinc-700' 
+                    : 'text-zinc-400 hover:text-white'
+                }`}
+                title={isRecording ? 'Stop recording' : 'Start dictation'}
+              >
+                {isRecording ? (
+                  <Square className="w-5 h-5 fill-white text-white" />
+                ) : (
+                  <Mic className="w-5 h-5" />
+                )}
+              </button>
+              <button
+                type="submit"
+                disabled={(!inputValue.trim() && files.length === 0) || isGenerating}
+                className="p-3 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-600/50 disabled:cursor-not-allowed text-white rounded-xl shadow-lg hover:shadow-[0_0_15px_rgba(79,70,229,0.5)] transition-all shrink-0 flex items-center justify-center group"
+                title="Generate"
+              >
+                {isGenerating ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <SendHorizontal className="w-5 h-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                )}
+              </button>
+            </div>
           </div>
         </form>
       </div>
