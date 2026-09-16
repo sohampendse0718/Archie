@@ -6,6 +6,7 @@ import { useTheme } from '@/components/ThemeProvider';
 import { ArrowLeft, LogOut, Sun, Moon, Sparkles, Mail, Shield } from 'lucide-react';
 import { useSettingsStore } from '@/store/useSettingsStore';
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 
 function getInitials(name?: string | null, email?: string | null): string {
   if (name && name.trim()) {
@@ -22,6 +23,7 @@ export default function ProfilePage() {
   const { theme, setTheme } = useTheme();
   const router = useRouter();
   const [signingOut, setSigningOut] = useState(false);
+  const [showSignOutModal, setShowSignOutModal] = useState(false);
   const { isAutosaveEnabled, setIsAutosaveEnabled } = useSettingsStore();
 
   const displayName =
@@ -156,7 +158,7 @@ export default function ProfilePage() {
             </div>
             <button
               id="btn-profile-signout"
-              onClick={handleSignOut}
+              onClick={() => setShowSignOutModal(true)}
               disabled={signingOut}
               className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-red-500/20 bg-transparent text-red-600 dark:text-red-400 text-[13px] font-semibold cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed hover:bg-red-50 dark:hover:bg-red-500/10 hover:border-red-500/50 transition-colors"
             >
@@ -165,6 +167,37 @@ export default function ProfilePage() {
           </div>
         </div>
       </main>
+
+      {/* Sign Out Confirmation Modal */}
+      {showSignOutModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-zinc-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 w-full max-w-sm mx-4 shadow-[0_8px_30px_rgb(0,0,0,0.5)] flex flex-col gap-2"
+          >
+            <h2 className="text-lg font-bold text-zinc-100 m-0">Sign Out</h2>
+            <p className="text-sm text-zinc-400 mb-4 mt-1">
+              Are you sure you want to end your session? You will need to log back in to access your architectures.
+            </p>
+            <div className="flex justify-end gap-3 mt-2">
+              <button
+                onClick={() => setShowSignOutModal(false)}
+                className="px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/5 rounded-lg transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSignOut}
+                disabled={signingOut}
+                className="px-4 py-2 text-sm font-medium text-red-500 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 rounded-lg transition-all"
+              >
+                Sign Out
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }
