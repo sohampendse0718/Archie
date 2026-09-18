@@ -72,26 +72,112 @@ function CanvasInner() {
     (event: React.DragEvent) => {
       event.preventDefault();
 
-      const type = event.dataTransfer.getData('application/reactflow');
-      if (typeof type === 'undefined' || !type) {
-        return;
-      }
+      const transferData = event.dataTransfer.getData('application/reactflow');
+      if (!transferData) return;
 
       const position = screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
       });
 
-      const newNode: ArchNode = {
-        id: crypto.randomUUID(),
-        type: 'customArch',
-        position,
-        data: {
-          label: `New ${type.charAt(0).toUpperCase() + type.slice(1)}`,
-          category: type,
-          description: 'Double click to edit or use the inspector panel.',
-        },
-      };
+      // Parse transfer data format: "nodeType::variant" or "nodeType::sub::variant"
+      const parts = transferData.split('::');
+      const nodeTypeKey = parts[0];
+
+      let newNode: ArchNode;
+
+      if (nodeTypeKey === 'arch') {
+        const category = parts[1] ?? 'backend';
+        newNode = {
+          id: crypto.randomUUID(),
+          type: 'customArch',
+          position,
+          data: {
+            label: `New ${category.charAt(0).toUpperCase() + category.slice(1)}`,
+            category,
+            description: 'Double click to edit or use the inspector panel.',
+          },
+        };
+      } else if (nodeTypeKey === 'flowchart') {
+        const shape = parts[1] ?? 'process';
+        const shapeLabels: Record<string, string> = {
+          terminal: 'Start',
+          process: 'Process',
+          decision: 'Decision',
+          io: 'Input / Output',
+        };
+        newNode = {
+          id: crypto.randomUUID(),
+          type: 'flowchart',
+          position,
+          data: { label: shapeLabels[shape] ?? shape, shape: shape as 'process' | 'decision' | 'terminal' | 'io' },
+        };
+      } else if (nodeTypeKey === 'erEntity') {
+        newNode = {
+          id: crypto.randomUUID(),
+          type: 'erEntity',
+          position,
+          data: {
+            label: 'new_entity',
+            attributes: [
+              { name: 'id', type: 'UUID', isPrimaryKey: true },
+              { name: 'created_at', type: 'TIMESTAMP' },
+            ],
+          },
+        };
+      } else if (nodeTypeKey === 'sequence') {
+        const participantType = parts[1] ?? 'service';
+        const ptLabels: Record<string, string> = {
+          actor: 'User', service: 'Service', database: 'Database', external: 'External',
+        };
+        newNode = {
+          id: crypto.randomUUID(),
+          type: 'sequence',
+          position,
+          data: { label: ptLabels[participantType] ?? participantType, participantType: participantType as 'actor' | 'service' | 'database' | 'external' },
+        };
+      } else if (nodeTypeKey === 'bpmn') {
+        const shape = parts[1] ?? 'task';   // task | event | gateway
+        const variant = parts[2];           // e.g. 'start', 'end', 'user', 'exclusive'
+        const labelMap: Record<string, string> = {
+          'event::start': 'Start', 'event::end': 'End', 'task::user': 'User Task',
+          'task::service': 'Service Task', 'gateway::exclusive': 'Gateway', 'gateway::parallel': 'Parallel Gateway',
+        };
+        const key = variant ? `${shape}::${variant}` : shape;
+        newNode = {
+          id: crypto.randomUUID(),
+          type: 'bpmn',
+          position,
+          data: {
+            label: labelMap[key] ?? shape,
+            shape: shape as 'task' | 'event' | 'gateway',
+            ...(shape === 'event' ? { eventType: (variant ?? 'start') as 'start' | 'end' | 'intermediate' } : {}),
+            ...(shape === 'task' ? { taskType: (variant ?? 'user') as 'user' | 'service' | 'script' } : {}),
+            ...(shape === 'gateway' ? { gatewayType: (variant ?? 'exclusive') as 'exclusive' | 'parallel' | 'inclusive' } : {}),
+          },
+        };
+      } else if (nodeTypeKey === 'document') {
+        const level = parseInt(parts[1] ?? '1', 10) as 1 | 2 | 3;
+        const levelLabels: Record<number, string> = { 1: 'New Section', 2: 'Sub-section', 3: 'Detail Item' };
+        newNode = {
+          id: crypto.randomUUID(),
+          type: 'document',
+          position,
+          data: { label: levelLabels[level] ?? 'Section', level },
+        };
+      } else {
+        // Fallback — legacy plain type string
+        newNode = {
+          id: crypto.randomUUID(),
+          type: 'customArch',
+          position,
+          data: {
+            label: `New ${transferData.charAt(0).toUpperCase() + transferData.slice(1)}`,
+            category: transferData,
+            description: 'Double click to edit or use the inspector panel.',
+          },
+        };
+      }
 
       setNodes([...nodes, newNode]);
     },

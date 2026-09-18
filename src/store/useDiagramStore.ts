@@ -42,6 +42,7 @@ type DiagramState = {
   weaknesses: string[];
   tradeoffs: string[];
   isScoreModalOpen: boolean;
+  diagramType: string;
   currentArchitectureId: string | null;
   currentArchitectureTitle: string;
   onNodesChange: OnNodesChange<ArchNode>;
@@ -63,6 +64,7 @@ type DiagramState = {
   toggleNodeOutage: (nodeId: string) => void;
   setCurrentArchitectureId: (id: string | null) => void;
   setCurrentArchitectureTitle: (title: string) => void;
+  setDiagramType: (type: string) => void;
   resetDiagram: () => void;
   updateNodeData: (id: string, data: Partial<AnyNodeData>) => void;
   deleteNode: (nodeId: string) => void;
@@ -81,6 +83,7 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
   weaknesses: [],
   tradeoffs: [],
   isScoreModalOpen: false,
+  diagramType: 'architecture',
   isExportModalOpen: false,
   failedNodes: [],
   degradedNodes: [],
@@ -124,6 +127,7 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
   setIsExportModalOpen: (open: boolean) => set({ isExportModalOpen: open }),
   setCurrentArchitectureId: (id: string | null) => set({ currentArchitectureId: id }),
   setCurrentArchitectureTitle: (title: string) => set({ currentArchitectureTitle: title }),
+  setDiagramType: (type: string) => set({ diagramType: type }),
   resetDiagram: () => set({
     nodes: [],
     edges: [],
@@ -138,6 +142,7 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
     degradedNodes: [],
     currentArchitectureId: null,
     currentArchitectureTitle: 'Untitled Architecture',
+    diagramType: 'architecture',
   }),
   updateNodeData: (id, data) => set((state) => {
     const updatedNodes = state.nodes.map((node) => 

@@ -9,7 +9,9 @@ import Sidebar from '@/components/Sidebar';
 import ScoreBreakdownModal from '@/components/ScoreBreakdownModal';
 import ProfileButton from '@/components/ProfileButton';
 import EdgeLegend from '@/components/EdgeLegend';
-import { Save, Download, Sparkles, Layout, Activity, ArrowLeft, Check, Loader2 } from 'lucide-react';
+import ArchieLogo from '@/components/Logo';
+import { Save, Download, Layout, Activity, ArrowLeft, Check, Loader2, Share2 } from 'lucide-react';
+import ShareModal from '@/components/ShareModal';
 import { useDiagramStore } from '@/store/useDiagramStore';
 import { useSettingsStore } from '@/store/useSettingsStore';
 import { createClient } from '@/lib/supabase/client';
@@ -38,6 +40,8 @@ export default function EditorPage() {
     setCurrentArchitectureId,
     setCurrentArchitectureTitle,
     resetDiagram,
+    diagramType,
+    setDiagramType,
   } = useDiagramStore();
 
   const [loadingArch, setLoadingArch] = useState(true);
@@ -45,6 +49,7 @@ export default function EditorPage() {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saved'>('idle');
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleInput, setTitleInput] = useState('');
+  const [showShareModal, setShowShareModal] = useState(false);
   const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isInitialLoad = useRef(true);
 
@@ -69,6 +74,11 @@ export default function EditorPage() {
       setCurrentArchitectureId(data.id);
       setCurrentArchitectureTitle(data.title);
       setTitleInput(data.title);
+
+      // Restore diagram type (defaults to 'architecture' for old rows)
+      if (data.diagram_type) {
+        setDiagramType(data.diagram_type);
+      }
 
       if (Array.isArray(data.nodes) && data.nodes.length > 0) {
         setNodes(data.nodes as Parameters<typeof setNodes>[0]);
@@ -97,7 +107,7 @@ export default function EditorPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  // Auto-save (debounced 2s) when nodes/edges/score change
+  // Auto-save (debounced 2s) when nodes/edges/score/diagramType change
   useEffect(() => {
     if (isInitialLoad.current || !id) return;
     if (!isAutosaveEnabled) return;
@@ -111,7 +121,7 @@ export default function EditorPage() {
       if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodes, edges, architectureScore, isAutosaveEnabled]);
+  }, [nodes, edges, architectureScore, diagramType, isAutosaveEnabled]);
 
   const saveToDb = useCallback(async (manual = false) => {
     if (!id) return;
@@ -125,6 +135,7 @@ export default function EditorPage() {
         edges: store.edges,
         score: store.architectureScore,
         title: store.currentArchitectureTitle,
+        diagram_type: store.diagramType,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id);
@@ -171,9 +182,9 @@ export default function EditorPage() {
 
           <div className="w-px h-5 bg-border-c shrink-0" />
 
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 shadow-[0_0_10px_rgba(59,130,246,0.1)] shrink-0">
-            <Sparkles className="w-4 h-4 text-blue-400" />
-          </div>
+          <ArchieLogo size="sm" />
+
+          <div className="w-px h-5 bg-border-c shrink-0" />
 
           {/* Editable Title */}
           {editingTitle ? (
@@ -204,6 +215,15 @@ export default function EditorPage() {
           >
             <Layout className="w-4 h-4" />
             Auto Layout
+          </button>
+
+          <button
+            id="btn-share-project"
+            onClick={() => setShowShareModal(true)}
+            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 hover:text-indigo-300 rounded-lg border border-indigo-500/30 transition-all shadow-sm"
+          >
+            <Share2 className="w-4 h-4" />
+            <span className="hidden sm:inline">Share</span>
           </button>
 
           <button
@@ -263,18 +283,26 @@ export default function EditorPage() {
           <ReactFlowProvider>
             <Canvas />
             <div className="absolute top-20 left-6 flex flex-col gap-4 z-10">
-              <Sidebar />
+              <Sidebar diagramType={diagramType} />
               <EdgeLegend />
-              <Controls 
-                orientation="horizontal" 
-                showInteractive={false} 
-                className="!static !m-0 !shadow-xl !w-fit !self-start !bg-surface/80 !border-border-c backdrop-blur-md !rounded-xl !overflow-hidden [&>button]:!bg-transparent [&>button]:!border-border-c [&>button]:!border-r [&>button]:last:!border-r-0 [&>button]:!text-muted hover:[&>button]:!text-fg hover:[&>button]:!bg-surface-2 [&>button]:!transition-colors" 
+              <Controls
+                orientation="horizontal"
+                showInteractive={false}
+                className="!static !m-0 !shadow-xl !w-fit !self-start !bg-surface/80 !border-border-c backdrop-blur-md !rounded-xl !overflow-hidden [&>button]:!bg-transparent [&>button]:!border-border-c [&>button]:!border-r [&>button]:last:!border-r-0 [&>button]:!text-muted hover:[&>button]:!text-fg hover:[&>button]:!bg-surface-2 [&>button]:!transition-colors"
               />
             </div>
             <CommandBar />
             <InspectorPanel />
             <ScoreBreakdownModal />
           </ReactFlowProvider>
+        )}
+        {/* Share Modal — outside ReactFlowProvider so it renders over the full screen */}
+        {showShareModal && (
+          <ShareModal
+            projectId={id}
+            projectTitle={currentArchitectureTitle}
+            onClose={() => setShowShareModal(false)}
+          />
         )}
       </main>
     </div>

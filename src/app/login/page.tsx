@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { Sparkles, Mail, Lock, Eye, EyeOff, Zap, Shield, Brain, AlertCircle } from 'lucide-react';
+import ArchieLogo from '@/components/Logo';
+import { Mail, Lock, Eye, EyeOff, Zap, Shield, Brain, AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -108,10 +109,8 @@ export default function LoginPage() {
         </div>
 
         {/* Logo */}
-        <div className="relative z-10 flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.2)] animate-pulse">
-            <Sparkles className="w-5 h-5 text-blue-400" />
-          </div>
+        <div className="relative z-10">
+          <ArchieLogo size="lg" />
         </div>
 
         {/* Hero Text */}
@@ -181,10 +180,7 @@ export default function LoginPage() {
 
             {/* Mobile logo */}
             <div className="flex items-center gap-3 mb-7 lg:hidden">
-              <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 animate-pulse">
-                <Sparkles className="w-4 h-4 text-blue-400" />
-              </div>
-              <span className="text-lg font-semibold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">Archie</span>
+              <ArchieLogo size="md" />
             </div>
 
             {/* Heading */}

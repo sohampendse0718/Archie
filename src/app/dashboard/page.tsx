@@ -1,12 +1,14 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState, useCallback, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/components/AuthProvider';
 import ProfileButton from '@/components/ProfileButton';
-import { Sparkles, Plus, Activity, Trash2, ArrowRight, Loader2, LayoutGrid, Clock, MoreVertical } from 'lucide-react';
-import { motion } from 'framer-motion';
+import ArchieLogo from '@/components/Logo';
+import JoinModal from '@/components/JoinModal';
+import { Sparkles, Plus, Activity, Trash2, Loader2, LayoutGrid, Clock, Pin, PinOff, Link2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 type Architecture = {
   id: string;
@@ -16,6 +18,22 @@ type Architecture = {
   edges: unknown[];
   updated_at: string;
 };
+
+type PinnedEntry = { id: string; pinnedAt: number };
+
+const PIN_STORAGE_KEY = 'archie-pinned-canvases';
+
+function loadPins(): PinnedEntry[] {
+  try {
+    return JSON.parse(localStorage.getItem(PIN_STORAGE_KEY) ?? '[]');
+  } catch {
+    return [];
+  }
+}
+
+function savePins(pins: PinnedEntry[]) {
+  localStorage.setItem(PIN_STORAGE_KEY, JSON.stringify(pins));
+}
 
 function timeAgo(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
@@ -36,9 +54,10 @@ function getScoreBadge(score: number | null) {
   return { label: `Score: ${score}`, color: 'text-red-600 bg-red-50 border-red-100 dark:text-red-400 dark:bg-red-500/10 dark:border-red-500/20', dot: 'bg-red-500' };
 }
 
-export default function DashboardPage() {
+function DashboardPageInner() {
   const { user } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
 
   const [architectures, setArchitectures] = useState<Architecture[]>([]);
@@ -46,7 +65,27 @@ export default function DashboardPage() {
   const [creating, setCreating] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
-  const [greeting, setGreeting] = useState("Hello");
+  const [greeting, setGreeting] = useState('Hello');
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [joinInitialCode, setJoinInitialCode] = useState('');
+
+  // Pin state
+  const [pins, setPins] = useState<PinnedEntry[]>([]);
+  const [pinReplaceTarget, setPinReplaceTarget] = useState<{ oldPin: PinnedEntry; newId: string } | null>(null);
+
+  // Load pins from localStorage on mount
+  useEffect(() => {
+    setPins(loadPins());
+  }, []);
+
+  // Auto-open join modal if ?code= is in URL
+  useEffect(() => {
+    const code = searchParams.get('code');
+    if (code) {
+      setJoinInitialCode(code);
+      setShowJoinModal(true);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -84,9 +123,73 @@ export default function DashboardPage() {
     setDeletingId(projectToDelete);
     await supabase.from('architectures').delete().eq('id', projectToDelete);
     setArchitectures(prev => prev.filter(a => a.id !== projectToDelete));
+    // Also remove from pins if pinned
+    const newPins = pins.filter(p => p.id !== projectToDelete);
+    setPins(newPins);
+    savePins(newPins);
     setDeletingId(null);
     setProjectToDelete(null);
   };
+
+  // ─── Pin helpers ────────────────────────────────────────────────────────────
+
+  const isPinned = (id: string) => pins.some(p => p.id === id);
+
+  const oldestPin = pins.length > 0
+    ? pins.reduce((a, b) => a.pinnedAt < b.pinnedAt ? a : b)
+    : null;
+
+  const handlePinClick = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+
+    if (isPinned(id)) {
+      // Unpin
+      const newPins = pins.filter(p => p.id !== id);
+      setPins(newPins);
+      savePins(newPins);
+      return;
+    }
+
+    if (pins.length < 2) {
+      // Pin normally
+      const newPins = [...pins, { id, pinnedAt: Date.now() }];
+      setPins(newPins);
+      savePins(newPins);
+    } else {
+      // Ask to replace oldest
+      setPinReplaceTarget({ oldPin: oldestPin!, newId: id });
+    }
+  };
+
+  const confirmPinReplace = () => {
+    if (!pinReplaceTarget) return;
+    const newPins = [
+      ...pins.filter(p => p.id !== pinReplaceTarget.oldPin.id),
+      { id: pinReplaceTarget.newId, pinnedAt: Date.now() },
+    ];
+    setPins(newPins);
+    savePins(newPins);
+    setPinReplaceTarget(null);
+  };
+
+  // ─── Sorted architectures (pinned first) ────────────────────────────────────
+
+  const sortedArchitectures = [...architectures].sort((a, b) => {
+    const aPin = pins.find(p => p.id === a.id);
+    const bPin = pins.find(p => p.id === b.id);
+    if (aPin && !bPin) return -1;
+    if (!aPin && bPin) return 1;
+    if (aPin && bPin) return bPin.pinnedAt - aPin.pinnedAt;
+    return 0;
+  });
+
+  const oldestPinnedArch = oldestPin
+    ? architectures.find(a => a.id === oldestPin.id)
+    : null;
+
+  const newPinArch = pinReplaceTarget
+    ? architectures.find(a => a.id === pinReplaceTarget.newId)
+    : null;
 
   const firstName = (
     user?.user_metadata?.full_name ||
@@ -107,15 +210,20 @@ export default function DashboardPage() {
       {/* ── Header ── */}
       <header className="shrink-0 sticky top-0 z-50 h-[72px] px-6 bg-surface/80 backdrop-blur-xl border-b border-border-c shadow-[0_8px_30px_rgb(0,0,0,0.4)] flex items-center justify-between">
         <div className="flex items-center gap-3 relative z-10">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-            <Sparkles size={16} className="text-white" />
-          </div>
-          <span className="font-bold text-lg tracking-tight text-fg">Archie</span>
+          <ArchieLogo size="md" />
           <div className="h-4 w-px bg-border-c mx-2" />
           <span className="font-mono text-sm text-muted tracking-wider uppercase">Workspace</span>
         </div>
 
         <div className="flex items-center gap-4">
+          <button
+            id="btn-join-project"
+            onClick={() => { setJoinInitialCode(''); setShowJoinModal(true); }}
+            className="flex items-center gap-2 px-4 py-2 bg-surface-2/80 backdrop-blur-md border border-border-c text-muted hover:text-fg hover:border-purple-500/40 hover:bg-purple-500/5 transition-all duration-300 rounded-xl text-sm font-semibold"
+          >
+            <Link2 size={16} />
+            Join Project
+          </button>
           <button
             id="btn-new-architecture"
             onClick={handleCreate}
@@ -148,12 +256,12 @@ export default function DashboardPage() {
             ))}
           </div>
         ) : (
-          <motion.div 
+          <motion.div
             initial="hidden"
             animate="visible"
             variants={{
               hidden: {},
-              visible: { transition: { staggerChildren: 0.1 } }
+              visible: { transition: { staggerChildren: 0.07 } }
             }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
@@ -175,28 +283,58 @@ export default function DashboardPage() {
             </motion.button>
 
             {/* Architecture cards */}
-            {architectures.map(arch => {
+            {sortedArchitectures.map(arch => {
               const nodeCount = Array.isArray(arch.nodes) ? arch.nodes.length : 0;
               const badge = getScoreBadge(arch.score);
+              const pinned = isPinned(arch.id);
 
               return (
                 <motion.div
                   variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
                   key={arch.id}
                   onClick={() => router.push(`/editor/${arch.id}`)}
-                  className="group relative h-48 bg-surface border border-border-c rounded-2xl p-5 flex flex-col cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_-5px_rgba(124,58,237,0.2)] hover:border-purple-500/30"
+                  className={`group relative h-48 bg-surface border rounded-2xl p-5 flex flex-col cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_-5px_rgba(124,58,237,0.2)] ${
+                    pinned
+                      ? 'border-indigo-500/40 shadow-[0_0_20px_-5px_rgba(99,102,241,0.2)] ring-1 ring-indigo-500/20'
+                      : 'border-border-c hover:border-purple-500/30'
+                  }`}
                 >
+                  {/* Pinned badge */}
+                  {pinned && (
+                    <div className="absolute top-3 left-3 flex items-center gap-1 px-2 py-0.5 bg-indigo-500/15 border border-indigo-500/30 rounded-full text-[10px] font-semibold text-indigo-400">
+                      <Pin size={9} />
+                      Pinned
+                    </div>
+                  )}
+
                   <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1 pr-4">
+                    <div className={`flex-1 pr-2 ${pinned ? 'pt-5' : ''}`}>
                       <h3 className="font-semibold text-lg line-clamp-1 group-hover:text-accent transition-colors">{arch.title}</h3>
                     </div>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setProjectToDelete(arch.id); }}
-                      disabled={deletingId === arch.id}
-                      className="p-1.5 text-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors relative z-20"
-                    >
-                      {deletingId === arch.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
-                    </button>
+
+                    <div className="flex items-center gap-1 shrink-0">
+                      {/* Pin button */}
+                      <button
+                        onClick={(e) => handlePinClick(e, arch.id)}
+                        className={`p-1.5 rounded-lg transition-colors relative z-20 ${
+                          pinned
+                            ? 'text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10'
+                            : 'text-muted hover:text-indigo-400 hover:bg-indigo-500/10'
+                        }`}
+                        title={pinned ? 'Unpin' : 'Pin to top'}
+                      >
+                        {pinned ? <PinOff size={15} /> : <Pin size={15} />}
+                      </button>
+
+                      {/* Delete button */}
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setProjectToDelete(arch.id); }}
+                        disabled={deletingId === arch.id}
+                        className="p-1.5 text-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors relative z-20"
+                      >
+                        {deletingId === arch.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                      </button>
+                    </div>
                   </div>
 
                   <div className="mt-auto space-y-4">
@@ -225,8 +363,8 @@ export default function DashboardPage() {
         {/* Empty state */}
         {!loading && architectures.length === 0 && (
           <div className="text-center py-24 flex flex-col items-center relative z-10">
-            <motion.div 
-              animate={{ y: [0, -10, 0] }} 
+            <motion.div
+              animate={{ y: [0, -10, 0] }}
               transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
               className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-600/20 flex items-center justify-center mb-6"
             >
@@ -247,7 +385,7 @@ export default function DashboardPage() {
         )}
       </main>
 
-      {/* Delete Confirmation Modal */}
+      {/* ── Delete Confirmation Modal ── */}
       {projectToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="bg-surface border border-border-c rounded-xl p-6 shadow-2xl max-w-sm w-full mx-4 flex flex-col gap-4 animate-fade-scale-in">
@@ -274,6 +412,75 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+
+      {/* ── Pin Replace Modal ── */}
+      <AnimatePresence>
+        {pinReplaceTarget && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 10 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 10 }}
+              className="bg-surface border border-border-c rounded-xl p-6 shadow-2xl max-w-sm w-full mx-4 flex flex-col gap-4"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                  <Pin size={16} className="text-indigo-400" />
+                </div>
+                <h2 className="text-lg font-semibold text-fg">Replace Pinned Project?</h2>
+              </div>
+
+              <p className="text-sm text-muted leading-relaxed">
+                You already have 2 pinned projects. To pin{' '}
+                <span className="text-fg font-medium">"{newPinArch?.title ?? '...'}"</span>,
+                replace the oldest pin{' '}
+                <span className="text-fg font-medium">"{oldestPinnedArch?.title ?? '...'}"</span>?
+              </p>
+
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setPinReplaceTarget(null)}
+                  className="px-4 py-2 text-sm text-muted hover:text-fg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmPinReplace}
+                  className="flex items-center gap-2 px-4 py-2 text-sm bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-lg hover:bg-indigo-500/20 hover:border-indigo-500/40 transition-all font-medium"
+                >
+                  <Pin size={14} />
+                  Replace &amp; Pin
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Join Modal */}
+      {showJoinModal && (
+        <JoinModal
+          initialCode={joinInitialCode}
+          onClose={() => setShowJoinModal(false)}
+        />
+      )}
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-bg flex items-center justify-center">
+        <Loader2 size={28} className="animate-spin text-accent" />
+      </div>
+    }>
+      <DashboardPageInner />
+    </Suspense>
   );
 }

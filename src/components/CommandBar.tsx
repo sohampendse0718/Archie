@@ -5,6 +5,7 @@ import { useRef, useEffect, useState } from 'react';
 import { useDiagramStore } from '@/store/useDiagramStore';
 import DiagramTypeSelector, { DIAGRAM_TYPES, DiagramType } from './DiagramTypeSelector';
 
+
 export default function CommandBar() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -17,6 +18,8 @@ export default function CommandBar() {
   const [selectedDiagramType, setSelectedDiagramType] = useState<DiagramType | null>(null);
 
   const nodes = useDiagramStore(state => state.nodes);
+  const storeDiagramType = useDiagramStore(state => state.diagramType);
+  const setStoreDiagramType = useDiagramStore(state => state.setDiagramType);
   const isEmpty = nodes.length === 0 && !isGenerating;
 
   const adjustHeight = () => {
@@ -29,6 +32,22 @@ export default function CommandBar() {
   useEffect(() => {
     adjustHeight();
   }, [inputValue]);
+
+  // Sync the selected diagram type from the store (restored from DB on page load)
+  useEffect(() => {
+    if (storeDiagramType && storeDiagramType !== 'architecture') {
+      const found = DIAGRAM_TYPES.find(dt => dt.id === storeDiagramType);
+      if (found) setSelectedDiagramType(found);
+    } else if (storeDiagramType === 'architecture') {
+      // architecture is the default; only set pill if nodes already exist (loaded canvas)
+      if (nodes.length > 0) {
+        const found = DIAGRAM_TYPES.find(dt => dt.id === 'architecture');
+        if (found) setSelectedDiagramType(found);
+      }
+    }
+  // We only want this to run when the store's diagramType is first set (page load)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storeDiagramType]);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -60,7 +79,10 @@ export default function CommandBar() {
   };
 
   const handleDiagramTypeSelect = (type: DiagramType) => {
-    setSelectedDiagramType(prev => prev?.id === type.id ? null : type);
+    const newType = selectedDiagramType?.id === type.id ? null : type;
+    setSelectedDiagramType(newType);
+    // Persist selected type to the store so it gets saved to DB
+    setStoreDiagramType(newType?.id ?? 'architecture');
     setTimeout(() => textareaRef.current?.focus(), 50);
   };
 
