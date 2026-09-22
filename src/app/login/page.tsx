@@ -73,14 +73,14 @@ export default function LoginPage() {
     }
   };
 
-  const features = [
-    { icon: Brain, label: 'AI-Powered Architecture', desc: 'Generate full system designs from a single prompt' },
-    { icon: Zap, label: 'Real-Time Simulation', desc: 'Simulate failures and blast radius instantly' },
-    { icon: Shield, label: 'Architecture Scoring', desc: 'Get a quality score with actionable insights' },
-  ];
-
   return (
-    <div className="min-h-screen w-full bg-bg bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] flex overflow-hidden animate-fade-in">
+    <div className="min-h-screen w-full bg-bg bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] flex flex-col overflow-hidden animate-fade-in">
+      
+      {/* Top Bar with Logo */}
+      <div className="absolute top-0 left-0 w-full p-6 lg:p-8 flex items-center justify-between z-20">
+        <ArchieLogo size="md" />
+      </div>
+
       {/* Schematic lines / nodes overlay */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-15">
         <svg className="absolute w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -99,70 +99,9 @@ export default function LoginPage() {
           </g>
         </svg>
       </div>
-      
-      {/* ── Left Panel: Branding ── */}
-      <div className="hidden lg:flex flex-col justify-between w-[52%] p-14 relative overflow-hidden">
-        {/* Subtle gradient orbs */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-indigo-600/10 blur-[120px]" />
-          <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-blue-600/8 blur-[100px]" />
-        </div>
 
-        {/* Hero Text */}
-        <div className="relative z-10 space-y-3 mt-auto mb-10">
-          {/* Perfectly Aligned Big Logo & Massive ARCHIE Header */}
-          <div className="animate-fade-in-up flex items-center gap-5 lg:gap-7" style={{ animationDelay: '200ms' }}>
-            <div className="w-20 h-20 lg:w-28 lg:h-28 shrink-0">
-              <ArchieIcon />
-            </div>
-            <h1 className="text-[70px] lg:text-[110px] font-black tracking-tighter leading-none bg-gradient-to-r from-cyan-300 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-              ARCHIE
-            </h1>
-          </div>
-
-          <div className="animate-fade-in-up space-y-3" style={{ animationDelay: '300ms' }}>
-            <p className="text-xs font-mono font-semibold tracking-[0.2em] uppercase text-indigo-400">AI Architecture Studio</p>
-            <h2 className="text-5xl font-bold text-fg leading-[1.1] tracking-tight">
-              Design systems{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-                that scale.
-              </span>
-            </h2>
-            <p className="text-muted text-lg leading-relaxed max-w-sm mt-4">
-              Describe your product in plain English. Archie generates production-ready architecture diagrams with scoring and failure analysis.
-            </p>
-          </div>
-
-          {/* Feature list */}
-          <div className="space-y-3 pt-6">
-            {features.map(({ icon: Icon, label, desc }, i) => (
-              <div 
-                key={label} 
-                className="flex items-start gap-4 group p-3.5 rounded-xl border border-border-c bg-surface/50 backdrop-blur-sm animate-fade-in-up hover:border-indigo-500/40 transition-colors"
-                style={{ animationDelay: `${400 + i * 100}ms` }}
-              >
-                <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-surface-2 border border-border-c flex items-center justify-center group-hover:border-indigo-500/40 group-hover:bg-indigo-500/10 transition-colors">
-                  <Icon className="w-4 h-4 text-muted group-hover:text-indigo-500 transition-colors" />
-                </div>
-                <div>
-                  <p className="text-fg text-sm font-medium">{label}</p>
-                  <p className="text-dim text-xs mt-0.5">{desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Bottom tagline */}
-        <div className="relative z-10 animate-fade-in-up" style={{ animationDelay: '800ms' }}>
-          <p className="text-dim text-sm">
-            &quot;Architecture is the art of how to waste space.&quot; — Philip Johnson
-          </p>
-        </div>
-      </div>
-
-      {/* ── Right Panel: Auth Card ── */}
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-10 relative">
+      {/* ── Auth Card Container ── */}
+      <div className="flex-1 flex items-center justify-center p-6 lg:p-10 relative z-10 w-full">
         {/* Subtle right-side glow */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-indigo-600/20 to-purple-600/20 blur-[120px]" />
@@ -176,10 +115,7 @@ export default function LoginPage() {
               <div className="absolute inset-[-1px] rounded-2xl bg-gradient-to-br from-indigo-500/20 via-transparent to-blue-500/20 opacity-60" />
             </div>
 
-            {/* Mobile logo */}
-            <div className="flex items-center gap-3 mb-7 lg:hidden">
-              <ArchieLogo size="md" />
-            </div>
+
 
             {/* Heading */}
             <div className="mb-7">
@@ -211,7 +147,7 @@ export default function LoginPage() {
                 id="btn-google"
                 onClick={() => handleOAuth('google')}
                 disabled={loading !== null}
-                className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-surface-2 hover:bg-surface border border-border-c rounded-xl text-fg text-sm font-medium transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed group hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/10"
+                className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-surface hover:bg-surface-2 border border-border-c rounded-xl text-fg text-sm font-medium transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed group"
               >
                 {loading === 'google' ? (
                   <span className="w-4 h-4 border-2 border-dim border-t-fg rounded-full animate-spin" />
@@ -230,7 +166,7 @@ export default function LoginPage() {
                 id="btn-github"
                 onClick={() => handleOAuth('github')}
                 disabled={loading !== null}
-                className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-surface-2 hover:bg-surface border border-border-c rounded-xl text-fg text-sm font-medium transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed group hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/10"
+                className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-surface hover:bg-surface-2 border border-border-c rounded-xl text-fg text-sm font-medium transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed group"
               >
                 {loading === 'github' ? (
                   <span className="w-4 h-4 border-2 border-dim border-t-fg rounded-full animate-spin" />
@@ -305,7 +241,7 @@ export default function LoginPage() {
                 id="btn-email-submit"
                 type="submit"
                 disabled={loading !== null}
-                className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-white text-sm font-semibold tracking-wide transition-all duration-150 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:shadow-[0_0_30px_rgba(99,102,241,0.4)] hover:-translate-y-0.5"
+                className="w-full py-2.5 px-4 bg-fg hover:bg-fg/90 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-bg text-sm font-semibold tracking-wide transition-all duration-150 flex items-center justify-center gap-2"
               >
                 {loading === 'email' ? (
                   <span className="w-4 h-4 border-2 border-indigo-300 border-t-white rounded-full animate-spin" />
@@ -320,7 +256,7 @@ export default function LoginPage() {
               {mode === 'signin' ? "Don't have an account?" : 'Already have an account?'}{' '}
               <button
                 onClick={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); setError(null); setMessage(null); }}
-                className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
+                className="text-fg hover:text-fg/80 font-medium transition-colors"
               >
                 {mode === 'signin' ? 'Sign up' : 'Sign in'}
               </button>

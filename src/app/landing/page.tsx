@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useRef } from 'react';
 import Link from 'next/link';
@@ -310,7 +310,7 @@ export default function LandingPage() {
           </Link>
           <Link
             href="/login"
-            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-sm font-semibold text-black bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 transition-all duration-200 shadow-[0_0_20px_rgba(0,240,255,0.25)] hover:shadow-[0_0_28px_rgba(0,240,255,0.4)]"
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-sm font-semibold text-bg bg-fg hover:bg-fg/90 transition-all duration-200 shadow-sm"
           >
             Sign up <ChevronRight className="w-3.5 h-3.5" />
           </Link>
@@ -374,7 +374,7 @@ export default function LandingPage() {
           >
             <Link
               href="/login"
-              className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-base font-semibold text-black bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 transition-all duration-200 shadow-[0_0_30px_rgba(0,240,255,0.3)] hover:shadow-[0_0_50px_rgba(0,240,255,0.5)] hover:-translate-y-0.5"
+              className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-base font-semibold text-bg bg-fg hover:bg-fg/90 transition-all duration-200 shadow-sm hover:-translate-y-0.5"
             >
               Start Designing for Free
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
@@ -521,7 +521,7 @@ export default function LandingPage() {
           <RevealSection delay={0.3} className="flex justify-center mt-14">
             <Link
               href="/login"
-              className="group inline-flex items-center gap-2.5 px-8 py-4 rounded-xl text-base font-semibold text-black bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 shadow-[0_0_40px_rgba(0,240,255,0.3)] hover:shadow-[0_0_60px_rgba(0,240,255,0.5)] transition-all duration-200 hover:-translate-y-0.5"
+              className="group inline-flex items-center gap-2.5 px-8 py-4 rounded-xl text-base font-semibold text-bg bg-fg hover:bg-fg/90 shadow-sm transition-all duration-200 hover:-translate-y-0.5"
             >
               Try Archie for free
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
