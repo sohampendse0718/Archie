@@ -1,6 +1,6 @@
 "use client";
 
-import { SendHorizontal, Loader2, Paperclip, X, Mic, Square } from 'lucide-react';
+import { SendHorizontal, Loader2, Paperclip, X, Mic, Square, AlertCircle } from 'lucide-react';
 import { useRef, useEffect, useState } from 'react';
 import { useDiagramStore } from '@/store/useDiagramStore';
 import DiagramTypeSelector, { DIAGRAM_TYPES, DiagramType } from './DiagramTypeSelector';
@@ -13,6 +13,7 @@ export default function CommandBar() {
   const [inputValue, setInputValue] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generationError, setGenerationError] = useState<string | null>(null);
   const [files, setFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [selectedDiagramType, setSelectedDiagramType] = useState<DiagramType | null>(null);
@@ -144,6 +145,7 @@ export default function CommandBar() {
     }
     if (!inputValue.trim() || isGenerating) return;
 
+    setGenerationError(null);
     setIsGenerating(true);
     useDiagramStore.getState().setArchitectureScore(null);
     useDiagramStore.getState().setScoreReasoning(null);
@@ -163,7 +165,8 @@ export default function CommandBar() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate diagram');
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || errData.message || 'Failed to generate diagram. Please check your Gemini API key in .env.local');
       }
 
       const data = await response.json();
@@ -229,8 +232,9 @@ export default function CommandBar() {
 
       setInputValue('');
       setFiles([]);
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      console.error('CommandBar Generation Error:', error);
+      setGenerationError(error?.message || 'Failed to generate diagram');
     } finally {
       setIsGenerating(false);
     }

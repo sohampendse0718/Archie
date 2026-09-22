@@ -50,16 +50,44 @@ Instructions for modifying the architecture:
 6. Re-evaluate the updated architecture, compute a new overall architectureScore (0-100), and write updated reasoning, strengths, weaknesses, and tradeoffs.
 7. Ensure all node and edge IDs are unique strings. All target and source references in edges must point to existing node IDs.`;
 
-    const result = await generateObject({
-      model: google('gemini-3.6-flash'),
-      schema: ArchitectureResponseSchema,
-      prompt: `Apply the instruction: "${instruction}" to the current architecture diagram, focusing on the component: "${focusedNode?.label || 'none'}".`,
-      system: systemPrompt,
-    });
+    const modelsToTry = [
+      'gemini-2.5-flash',
+      'gemini-2.0-flash',
+      'gemini-1.5-flash',
+      'gemini-1.5-pro',
+    ];
+
+    let result = null;
+    let lastError: unknown = null;
+
+    for (const modelName of modelsToTry) {
+      try {
+        result = await generateObject({
+          model: google(modelName),
+          schema: ArchitectureResponseSchema,
+          prompt: `Apply the instruction: "${instruction}" to the current architecture diagram, focusing on the component: "${focusedNode?.label || 'none'}".`,
+          system: systemPrompt,
+        });
+        if (result?.object) break;
+      } catch (err) {
+        lastError = err;
+        console.warn(`Model '${modelName}' failed during edit, trying next model fallback...`, err);
+      }
+    }
+
+    if (!result?.object) {
+      const errMessage = lastError instanceof Error ? lastError.message : String(lastError);
+      console.error('All Gemini model edit attempts failed:', errMessage);
+      return Response.json(
+        { error: `Modification failed: ${errMessage || 'Unable to connect to Google Gemini AI.'}` },
+        { status: 500 }
+      );
+    }
 
     return Response.json(result.object);
-  } catch (error) {
-    console.error('Editing Error:', error);
-    return Response.json({ error: 'Failed to modify architecture' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Editing Endpoint Error:', error);
+    const msg = error?.message || 'An unexpected server error occurred.';
+    return Response.json({ error: `Failed to modify architecture: ${msg}` }, { status: 500 });
   }
 }

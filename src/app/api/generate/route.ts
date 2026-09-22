@@ -67,17 +67,49 @@ export async function POST(req: Request) {
   try {
     const { prompt, diagramType = 'architecture' } = await req.json();
 
+    if (!prompt || typeof prompt !== 'string') {
+      return Response.json({ error: 'A valid text prompt is required.' }, { status: 400 });
+    }
+
     const typeKey = (diagramType in DIAGRAM_SCHEMAS ? diagramType : 'architecture') as DiagramTypeKey;
     const schema = DIAGRAM_SCHEMAS[typeKey];
     const systemPrompt = SYSTEM_PROMPTS[typeKey];
     const nodeType = NODE_TYPE_MAP[typeKey];
 
-    const result = await generateObject({
-      model: google('gemini-3.6-flash'),
-      schema,
-      prompt,
-      system: systemPrompt,
-    });
+    // Fallback model list in order of preference
+    const modelsToTry = [
+      'gemini-2.5-flash',
+      'gemini-2.0-flash',
+      'gemini-1.5-flash',
+      'gemini-1.5-pro',
+    ];
+
+    let result = null;
+    let lastError: unknown = null;
+
+    for (const modelName of modelsToTry) {
+      try {
+        result = await generateObject({
+          model: google(modelName),
+          schema,
+          prompt,
+          system: systemPrompt,
+        });
+        if (result?.object) break;
+      } catch (err) {
+        lastError = err;
+        console.warn(`Model '${modelName}' failed during generation, trying next model fallback...`, err);
+      }
+    }
+
+    if (!result?.object) {
+      const errMessage = lastError instanceof Error ? lastError.message : String(lastError);
+      console.error('All Gemini model generation attempts failed:', errMessage);
+      return Response.json(
+        { error: `Generation failed: ${errMessage || 'Unable to connect to Google Gemini AI.'}` },
+        { status: 500 }
+      );
+    }
 
     // Attach the nodeType so the client knows which React Flow node component to use
     return Response.json({
@@ -85,8 +117,9 @@ export async function POST(req: Request) {
       _nodeType: nodeType,
       _diagramType: typeKey,
     });
-  } catch (error) {
-    console.error('Generation Error:', error);
-    return Response.json({ error: 'Failed to generate diagram' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Generation Endpoint Error:', error);
+    const msg = error?.message || 'An unexpected server error occurred.';
+    return Response.json({ error: `Failed to generate diagram: ${msg}` }, { status: 500 });
   }
 }
