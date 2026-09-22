@@ -18,6 +18,8 @@ import {
   Network,
   BarChart3,
   GitBranch,
+  Check,
+  X,
 } from 'lucide-react';
 import ArchieLogo from '@/components/Logo';
 import { cn } from '@/lib/utils';
@@ -300,6 +302,7 @@ export default function LandingPage() {
         <nav className="relative z-10 hidden md:flex items-center gap-7 text-sm text-muted">
           <a href="#features" className="hover:text-fg transition-colors duration-200">Features</a>
           <a href="#how-it-works" className="hover:text-fg transition-colors duration-200">How it works</a>
+          <Link href="/pricing" className="hover:text-fg transition-colors duration-200">Pricing</Link>
         </nav>
         <div className="relative z-10 flex items-center gap-3">
           <Link
@@ -530,10 +533,17 @@ export default function LandingPage() {
         </div>
       </section>
 
+
+
       {/* FOOTER */}
-      <footer className="relative border-t border-white/[0.06] py-12 px-6">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
-          <ArchieLogo size="sm" />
+      <footer className="relative border-t border-white/[0.06] py-12 px-6 bg-bg">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex flex-col items-center md:items-start gap-2">
+            <ArchieLogo size="sm" />
+            <a href="mailto:sohampendse10@gmail.com" className="text-dim text-xs hover:text-cyan-400 transition-colors">
+              sohampendse10@gmail.com
+            </a>
+          </div>
           <p className="text-dim text-xs text-center">
             &ldquo;Architecture is the art of how to waste space.&rdquo; — Philip Johnson
           </p>
