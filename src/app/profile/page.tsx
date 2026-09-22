@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthProvider';
 import { useTheme } from '@/components/ThemeProvider';
-import { ArrowLeft, LogOut, Sun, Moon, Sparkles, Mail, Shield } from 'lucide-react';
+import { ArrowLeft, LogOut, Sun, Moon, Sparkles, Mail, Shield, User, Upload, AlertTriangle } from 'lucide-react';
 import { useSettingsStore } from '@/store/useSettingsStore';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
@@ -46,7 +46,7 @@ export default function ProfilePage() {
   };
 
   const sectionHeadClass = "px-5 py-3 border-b border-white/5 text-[11px] font-semibold tracking-[0.08em] uppercase text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5";
-  const cardClass = "bg-white/60 dark:bg-zinc-900/40 backdrop-blur-xl border border-zinc-200/50 dark:border-white/5 hover:border-purple-400 dark:hover:border-purple-500/30 transition-all duration-300 shadow-lg shadow-zinc-200/50 dark:shadow-xl dark:shadow-none rounded-[14px] overflow-hidden relative z-10 flex flex-col";
+  const cardClass = "bg-black/5 dark:bg-zinc-900/40 backdrop-blur-xl border border-zinc-200/50 dark:border-white/5 hover:border-purple-400 dark:hover:border-purple-500/30 transition-all duration-300 rounded-[14px] overflow-hidden relative z-10 flex flex-col";
 
   return (
     <div className="relative min-h-screen bg-bg text-fg flex flex-col font-sans overflow-y-auto overflow-x-hidden no-scrollbar">
@@ -77,25 +77,52 @@ export default function ProfilePage() {
       </header>
 
       {/* Body */}
-      <main className="flex-1 w-full max-w-[520px] mx-auto px-6 py-9 flex flex-col gap-4 relative z-10">
+      <main className="flex-1 w-full max-w-[560px] mx-auto px-6 py-9 flex flex-col gap-5 relative z-10">
 
-        {/* Account card */}
+        {/* Profile Details card */}
         <div className={cardClass}>
-          <div className={sectionHeadClass}><Shield size={12} /> Account</div>
-          <div className="p-5 flex items-center gap-4">
-            <div className="w-[60px] h-[60px] rounded-[14px] overflow-hidden shrink-0 border border-white/10 flex items-center justify-center bg-gradient-to-br from-indigo-500/20 to-purple-500/20 shadow-[inset_0_2px_10px_rgba(255,255,255,0.1)] text-indigo-400 font-bold text-xl">
-              {avatarUrl
-                ? <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover" />
-                : initials}
+          <div className={sectionHeadClass}><User size={12} /> Profile Details</div>
+          <div className="p-6 flex flex-col-reverse sm:flex-row gap-8">
+            <div className="flex-1 flex flex-col gap-5">
+              {/* Name */}
+              <div>
+                <label className="block text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Full Name</label>
+                <input 
+                  type="text" 
+                  defaultValue={displayName} 
+                  className="w-full bg-black/5 dark:bg-black/20 border border-zinc-200 dark:border-white/10 rounded-lg px-3.5 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all placeholder:text-zinc-400 dark:placeholder:text-zinc-600"
+                  placeholder="Enter your name"
+                />
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="block text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Email Address</label>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{email}</span>
+                </div>
+              </div>
+
+              {/* Password / Provider */}
+              <div>
+                <label className="block text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Authentication</label>
+                <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
+                  Managed by {providerLabel}
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col gap-1 min-w-0">
-              <span className="text-base font-bold text-zinc-900 dark:text-zinc-100">{displayName}</span>
-              <span className="flex items-center gap-1.5 text-[13px] text-zinc-500 dark:text-zinc-400">
-                <Mail size={12} /> {email}
-              </span>
-              <span className="inline-flex items-center w-fit px-2 py-0.5 rounded-md mt-0.5 bg-surface-2 border border-border-c text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
-                via {providerLabel}
-              </span>
+
+            {/* Avatar */}
+            <div className="shrink-0 flex flex-col items-center gap-4 sm:pt-2">
+              <div className="w-[110px] h-[110px] rounded-full overflow-hidden border border-white/10 flex items-center justify-center bg-gradient-to-br from-indigo-500/20 to-purple-500/20 shadow-xl text-indigo-400 font-bold text-3xl ring-4 ring-black/5 dark:ring-white/5">
+                {avatarUrl
+                  ? <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover" />
+                  : initials}
+              </div>
+              <button className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-zinc-200 dark:border-white/10 hover:bg-zinc-100 dark:hover:bg-white/5 transition-colors text-xs font-medium text-zinc-700 dark:text-zinc-300 cursor-pointer shadow-sm">
+                <Upload size={13} />
+                Upload Photo
+              </button>
             </div>
           </div>
         </div>
@@ -103,10 +130,10 @@ export default function ProfilePage() {
         {/* Appearance card */}
         <div className={cardClass}>
           <div className={sectionHeadClass}><Sun size={12} /> Appearance</div>
-          <div className="px-5 py-4 flex items-center justify-between gap-3">
+          <div className="px-6 py-5 flex items-center justify-between gap-4">
             <div>
               <p className="text-[13px] font-semibold text-zinc-900 dark:text-zinc-100 m-0">Theme</p>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-[3px] mb-0">Changes all pages instantly</p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 mb-0">Changes all pages instantly</p>
             </div>
             {/* Toggle */}
             <div className="flex items-center gap-1 bg-surface-2 border border-border-c rounded-[10px] p-1">
@@ -129,14 +156,13 @@ export default function ProfilePage() {
           </div>
         </div>
 
-
         {/* Preferences card */}
         <div className={cardClass}>
           <div className={sectionHeadClass}><Shield size={12} /> Preferences</div>
-          <div className="px-5 py-4 flex items-center justify-between gap-3">
+          <div className="px-6 py-5 flex items-center justify-between gap-4">
             <div>
               <p className="text-[13px] font-semibold text-zinc-900 dark:text-zinc-100 m-0">Autosave</p>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-[3px] mb-0">Automatically save diagram changes</p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 mb-0">Automatically save diagram changes</p>
             </div>
             {/* Custom Toggle Switch */}
             <div
@@ -150,22 +176,41 @@ export default function ProfilePage() {
 
         {/* Sign out card */}
         <div className={cardClass}>
-          <div className={sectionHeadClass}><LogOut size={12} className="text-red-600 dark:text-red-400" /><span className="text-red-600 dark:text-red-400">Session</span></div>
-          <div className="px-5 py-4 flex items-center justify-between">
+          <div className={sectionHeadClass}><LogOut size={12} /> Session</div>
+          <div className="px-6 py-5 flex items-center justify-between gap-4">
             <div>
               <p className="text-[13px] font-semibold text-zinc-900 dark:text-zinc-100 m-0">Sign out</p>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-[3px] mb-0">Redirects to login page</p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 mb-0">Redirects to login page</p>
             </div>
             <button
               id="btn-profile-signout"
               onClick={() => setShowSignOutModal(true)}
               disabled={signingOut}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-red-500/20 bg-transparent text-red-600 dark:text-red-400 text-[13px] font-semibold cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed hover:bg-red-50 dark:hover:bg-red-500/10 hover:border-red-500/50 transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-zinc-200 dark:border-white/10 bg-transparent text-zinc-700 dark:text-zinc-300 text-[13px] font-semibold cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed hover:bg-zinc-100 dark:hover:bg-white/5 transition-colors shadow-sm"
             >
               <LogOut size={13} /> Sign out
             </button>
           </div>
         </div>
+
+        {/* Danger Zone card */}
+        <div className="mt-2 bg-red-500/5 dark:bg-red-500/5 backdrop-blur-xl border border-red-500/20 shadow-lg shadow-red-500/5 rounded-[14px] overflow-hidden relative z-10 flex flex-col">
+          <div className="px-5 py-3 border-b border-red-500/10 text-[11px] font-semibold tracking-[0.08em] uppercase text-red-600 dark:text-red-500 flex items-center gap-1.5">
+            <AlertTriangle size={12} /> Danger Zone
+          </div>
+          <div className="px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+            <div>
+              <p className="text-[13px] font-semibold text-red-700 dark:text-red-400 m-0">Delete Account</p>
+              <p className="text-xs text-red-600/80 dark:text-red-400/80 mt-1 mb-0 max-w-[280px] leading-relaxed">
+                Proceed with caution. Once completed, this action cannot be undone and all your data will be permanently deleted.
+              </p>
+            </div>
+            <button className="shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-lg border border-red-500/20 bg-red-500/10 hover:bg-red-500/20 text-red-700 dark:text-red-400 text-[13px] font-semibold cursor-pointer transition-colors shadow-sm">
+              Delete Account
+            </button>
+          </div>
+        </div>
+
       </main>
 
       {/* Sign Out Confirmation Modal */}
@@ -201,3 +246,4 @@ export default function ProfilePage() {
     </div>
   );
 }
+

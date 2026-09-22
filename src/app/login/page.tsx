@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import ArchieLogo from '@/components/Logo';
+import ArchieLogo, { ArchieIcon } from '@/components/Logo';
 import { Mail, Lock, Eye, EyeOff, Zap, Shield, Brain, AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
@@ -108,16 +108,14 @@ export default function LoginPage() {
           <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-blue-600/8 blur-[100px]" />
         </div>
 
-        {/* Logo */}
-        <div className="relative z-10">
-          <ArchieLogo size="lg" />
-        </div>
-
         {/* Hero Text */}
-        <div className="relative z-10 space-y-2 mt-auto mb-10">
-          {/* Massive ARCHIE Header */}
-          <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-            <h1 className="text-[100px] lg:text-[140px] font-black tracking-tighter leading-none bg-gradient-to-b from-slate-300 via-cyan-700 to-slate-400 bg-clip-text text-transparent">
+        <div className="relative z-10 space-y-3 mt-auto mb-10">
+          {/* Perfectly Aligned Big Logo & Massive ARCHIE Header */}
+          <div className="animate-fade-in-up flex items-center gap-5 lg:gap-7" style={{ animationDelay: '200ms' }}>
+            <div className="w-20 h-20 lg:w-28 lg:h-28 shrink-0">
+              <ArchieIcon />
+            </div>
+            <h1 className="text-[70px] lg:text-[110px] font-black tracking-tighter leading-none bg-gradient-to-r from-cyan-300 via-blue-400 to-purple-400 bg-clip-text text-transparent">
               ARCHIE
             </h1>
           </div>

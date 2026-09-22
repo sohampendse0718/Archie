@@ -42,6 +42,7 @@ export default function EditorPage() {
     resetDiagram,
     diagramType,
     setDiagramType,
+    lastGeneratedAt,
   } = useDiagramStore();
 
   const [loadingArch, setLoadingArch] = useState(true);
@@ -52,6 +53,7 @@ export default function EditorPage() {
   const [showShareModal, setShowShareModal] = useState(false);
   const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isInitialLoad = useRef(true);
+  const pendingSave = useRef(false);
 
   // Load architecture on mount
   useEffect(() => {
@@ -110,6 +112,10 @@ export default function EditorPage() {
   // Auto-save (debounced 2s) when nodes/edges/score/diagramType change
   useEffect(() => {
     if (isInitialLoad.current || !id) return;
+    
+    // Always mark as pending when things change
+    pendingSave.current = true;
+
     if (!isAutosaveEnabled) return;
 
     if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
@@ -123,27 +129,64 @@ export default function EditorPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodes, edges, architectureScore, diagramType, isAutosaveEnabled]);
 
+  // Flush pending save on unmount
+  useEffect(() => {
+    return () => {
+      if (pendingSave.current && isAutosaveEnabled) {
+        saveToDb(false);
+      }
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAutosaveEnabled]);
+
+  // Force save immediately after AI generation completes
+  useEffect(() => {
+    if (!lastGeneratedAt || !id || isInitialLoad.current) return;
+    saveToDb(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lastGeneratedAt, id]);
+
   const saveToDb = useCallback(async (manual = false) => {
     if (!id) return;
     if (manual) setSaving(true);
 
     const store = useDiagramStore.getState();
-    await supabase
+    const updatePayload: Record<string, any> = {
+      nodes: store.nodes,
+      edges: store.edges,
+      score: store.architectureScore,
+      title: store.currentArchitectureTitle,
+      diagram_type: store.diagramType,
+      updated_at: new Date().toISOString(),
+    };
+
+    let { error } = await supabase
       .from('architectures')
-      .update({
-        nodes: store.nodes,
-        edges: store.edges,
-        score: store.architectureScore,
-        title: store.currentArchitectureTitle,
-        diagram_type: store.diagramType,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updatePayload)
       .eq('id', id);
+
+    // If update failed due to missing diagram_type column, retry without diagram_type
+    if (error && (error.code === 'PGRST204' || error.message?.includes('diagram_type') || error.message?.includes('column') || error.code === '42703')) {
+      delete updatePayload.diagram_type;
+      const retryResult = await supabase
+        .from('architectures')
+        .update(updatePayload)
+        .eq('id', id);
+      error = retryResult.error;
+    }
+
+    if (error) {
+      console.error('Failed to save to DB:', error.message || error.details || error.code || JSON.stringify(error, Object.getOwnPropertyNames(error)));
+    } else {
+      pendingSave.current = false;
+    }
 
     if (manual) {
       setSaving(false);
-      setSaveStatus('saved');
-      setTimeout(() => setSaveStatus('idle'), 2000);
+      if (!error) {
+        setSaveStatus('saved');
+        setTimeout(() => setSaveStatus('idle'), 2000);
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);

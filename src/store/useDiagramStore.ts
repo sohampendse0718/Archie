@@ -70,6 +70,8 @@ type DiagramState = {
   deleteNode: (nodeId: string) => void;
   updateEdge: (id: string, data: Partial<Edge>) => void;
   deleteEdge: (edgeId: string) => void;
+  lastGeneratedAt: number | null;
+  setLastGeneratedAt: (val: number) => void;
 };
 
 export const useDiagramStore = create<DiagramState>((set, get) => ({
@@ -89,6 +91,7 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
   degradedNodes: [],
   currentArchitectureId: null,
   currentArchitectureTitle: 'Untitled Architecture',
+  lastGeneratedAt: null,
   onNodesChange: (changes: NodeChange<ArchNode>[]) => {
     set({
       nodes: applyNodeChanges(changes, get().nodes),
@@ -143,6 +146,7 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
     currentArchitectureId: null,
     currentArchitectureTitle: 'Untitled Architecture',
     diagramType: 'architecture',
+    lastGeneratedAt: null,
   }),
   updateNodeData: (id, data) => set((state) => {
     const updatedNodes = state.nodes.map((node) => 
@@ -224,4 +228,5 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
       degradedNodes: Array.from(newDegradedNodes),
     };
   }),
+  setLastGeneratedAt: (val: number) => set({ lastGeneratedAt: val }),
 }));

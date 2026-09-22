@@ -225,6 +225,7 @@ export default function CommandBar() {
       // Use LR layout for sequence diagrams, TB for everything else
       const layoutDirection = diagramTypeKey === 'sequence' ? 'LR' : 'TB';
       useDiagramStore.getState().applyAutoLayout(layoutDirection);
+      useDiagramStore.getState().setLastGeneratedAt(Date.now());
 
       setInputValue('');
       setFiles([]);

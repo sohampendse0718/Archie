@@ -15,8 +15,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Archie",
-  description: "AI Architecture Visualizer",
+  title: "Archie - AI Architecture Studio",
+  description: "AI Architecture Visualizer and Diagram Refinement Engine",
+  icons: {
+    icon: "/logo.svg",
+    shortcut: "/logo.svg",
+    apple: "/logo.svg",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

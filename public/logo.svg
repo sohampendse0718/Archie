@@ -1,0 +1,75 @@
+<svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cyanGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F0FF" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+
+    <linearGradient id="purpleGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#A855F7" />
+      <stop offset="100%" stop-color="#D946EF" />
+    </linearGradient>
+
+    <linearGradient id="fullArchieGrad" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#00F0FF" />
+      <stop offset="50%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#C084FC" />
+    </linearGradient>
+  </defs>
+
+  <rect width="200" height="200" rx="36" fill="#0B0F19" />
+
+  <g>
+    <!-- Left Outer Leg (Cyan) -->
+    <path d="M100 24 L42 165 L66 165 L100 78 Z" fill="url(#cyanGlow)" stroke="#00F0FF" stroke-width="1.5" stroke-linejoin="round" />
+
+    <!-- Right Outer Leg (Purple) -->
+    <path d="M100 24 L158 165 L134 165 L100 78 Z" fill="url(#purpleGlow)" stroke="#D946EF" stroke-width="1.5" stroke-linejoin="round" />
+
+    <!-- Outer Frame Stiff Outline -->
+    <path d="M100 20 L35 172 H66 L100 85 L134 172 H165 L100 20 Z" stroke="url(#fullArchieGrad)" stroke-width="3.5" stroke-linejoin="round" fill="none" />
+
+    <!-- Inner Apex Triangle Cutout -->
+    <path d="M100 85 L78 140 H122 Z" stroke="url(#fullArchieGrad)" stroke-width="2.5" fill="none" />
+
+    <!-- Inner Parallel Tracks -->
+    <path d="M94 48 L62 138" stroke="#00F0FF" stroke-width="3" stroke-linecap="round" />
+    <circle cx="86" cy="68" r="4.5" fill="#0B0F19" stroke="#00F0FF" stroke-width="2.5" />
+    <circle cx="74" cy="102" r="4.5" fill="#0B0F19" stroke="#00F0FF" stroke-width="2.5" />
+
+    <path d="M106 48 L138 138" stroke="#C084FC" stroke-width="3" stroke-linecap="round" />
+    <circle cx="114" cy="68" r="4.5" fill="#0B0F19" stroke="#C084FC" stroke-width="2.5" />
+    <circle cx="126" cy="102" r="4.5" fill="#0B0F19" stroke="#C084FC" stroke-width="2.5" />
+
+    <!-- Left Outward Extensions -->
+    <path d="M72 70 H48 V58 H36" stroke="#00F0FF" stroke-width="2.5" stroke-linecap="round" fill="none" />
+    <circle cx="36" cy="58" r="4.5" fill="#0B0F19" stroke="#00F0FF" stroke-width="2.5" />
+
+    <path d="M58 105 H30 V92 H18" stroke="#00F0FF" stroke-width="2.5" stroke-linecap="round" fill="none" />
+    <circle cx="18" cy="92" r="4.5" fill="#0B0F19" stroke="#00F0FF" stroke-width="2.5" />
+
+    <path d="M48 135 H26 V148 H14" stroke="#00F0FF" stroke-width="2.5" stroke-linecap="round" fill="none" />
+    <circle cx="14" cy="148" r="4.5" fill="#0B0F19" stroke="#00F0FF" stroke-width="2.5" />
+
+    <!-- Right Outward Extensions -->
+    <path d="M128 70 H152 V58 H164" stroke="#C084FC" stroke-width="2.5" stroke-linecap="round" fill="none" />
+    <circle cx="164" cy="58" r="4.5" fill="#0B0F19" stroke="#C084FC" stroke-width="2.5" />
+
+    <path d="M142 105 H170 V92 H182" stroke="#C084FC" stroke-width="2.5" stroke-linecap="round" fill="none" />
+    <circle cx="182" cy="92" r="4.5" fill="#0B0F19" stroke="#C084FC" stroke-width="2.5" />
+
+    <path d="M152 135 H174 V148 H186" stroke="#C084FC" stroke-width="2.5" stroke-linecap="round" fill="none" />
+    <circle cx="186" cy="148" r="4.5" fill="#0B0F19" stroke="#C084FC" stroke-width="2.5" />
+
+    <!-- Crossbars -->
+    <path d="M78 115 H100" stroke="#00F0FF" stroke-width="2.5" stroke-linecap="round" />
+    <path d="M100 115 H122" stroke="#C084FC" stroke-width="2.5" stroke-linecap="round" />
+    <circle cx="100" cy="115" r="4.5" fill="#0B0F19" stroke="url(#fullArchieGrad)" stroke-width="2.5" />
+
+    <path d="M70 135 L90 125" stroke="#00F0FF" stroke-width="2.5" />
+    <circle cx="90" cy="125" r="4" fill="#00F0FF" />
+    <path d="M90 125 L110 138" stroke="url(#fullArchieGrad)" stroke-width="2.5" />
+    <circle cx="110" cy="138" r="4" fill="#C084FC" />
+    <path d="M110 138 L130 135" stroke="#C084FC" stroke-width="2.5" />
+  </g>
+</svg>
