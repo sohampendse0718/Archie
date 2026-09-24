@@ -538,12 +538,7 @@ export default function LandingPage() {
       {/* FOOTER */}
       <footer className="relative border-t border-white/[0.06] py-12 px-6 bg-bg">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex flex-col items-center md:items-start gap-2">
-            <ArchieLogo size="sm" />
-            <a href="mailto:sohampendse10@gmail.com" className="text-dim text-xs hover:text-cyan-400 transition-colors">
-              sohampendse10@gmail.com
-            </a>
-          </div>
+          <ArchieLogo size="sm" />
           <p className="text-dim text-xs text-center">
             &ldquo;Architecture is the art of how to waste space.&rdquo; — Philip Johnson
           </p>
