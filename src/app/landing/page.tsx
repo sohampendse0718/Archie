@@ -7,6 +7,7 @@ import {
   useScroll,
   useTransform,
   useInView,
+  type Variants,
 } from 'framer-motion';
 import {
   Brain,
@@ -27,7 +28,7 @@ import { cn } from '@/lib/utils';
 /* ─────────────────────────────────────────────────
    Shared animation variants
 ───────────────────────────────────────────────── */
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 28 },
   visible: (delay: number = 0) => ({
     opacity: 1,
@@ -36,7 +37,7 @@ const fadeUp = {
   }),
 };
 
-const fadeIn = {
+const fadeIn: Variants = {
   hidden: { opacity: 0 },
   visible: (delay: number = 0) => ({
     opacity: 1,
