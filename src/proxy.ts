@@ -32,7 +32,7 @@ export async function proxy(request: NextRequest) {
   // Redirect root → dashboard
   if (pathname === '/') {
     const url = request.nextUrl.clone();
-    url.pathname = user ? '/dashboard' : '/login';
+    url.pathname = user ? '/dashboard' : '/landing';
     return NextResponse.redirect(url);
   }
 
