@@ -1,52 +1,97 @@
-# Archie
+<div align="center">
+  <img src="public/assets/dashboard.png" alt="Archie Dashboard" width="100%" />
+</div>
 
-Archie is an intelligent, AI-powered system architecture diagram generator and refinement tool. Built with Next.js, React Flow, and Google's Gemini models, it transforms natural language prompts into scalable, visually stunning, and interactive software architectures.
+<h1 align="center">Archie — The AI Architecture Studio</h1>
 
-## ✨ Unique Features
+<p align="center">
+  <strong>Intelligently design, evaluate, and manage system architectures using the power of AI.</strong>
+</p>
 
-- **Natural Language to Architecture:** Simply describe what you want to build (e.g., "Design a microservices backend for an e-commerce app"), and Archie's AI engine instantly generates a complete, connected system architecture.
-- **Smart Architecture Scoring:** Every generated design receives an AI-evaluated score (0-100) assessing its quality, scalability, and robustness. The evaluation includes detailed reasoning, key strengths, weaknesses, and architectural trade-offs.
-- **Bottleneck & Risk Identification:** Archie automatically detects and flags Single Points of Failure (SPOFs), severe throughput bottlenecks, and rate-limiting vulnerabilities within specific nodes.
-- **Context-Aware Refinement:** Focus on any individual component on the canvas and provide follow-up instructions (e.g., "Add a Redis caching layer here"). The AI will intelligently modify the existing architecture while maintaining the stability of unaffected components.
-- **Interactive Visual Canvas:** Built on top of React Flow, featuring smooth animations, drag-and-drop node creation, auto-layout algorithms (powered by Dagre), zooming controls, and a MiniMap.
-- **Categorized Nodes:** System components are visually categorized into distinct domains (`frontend`, `backend`, `database`, `ai`, and `infrastructure`) for immediate readability.
+<p align="center">
+  <a href="#features">Features</a> •
+  <a href="#tech-stack">Tech Stack</a> •
+  <a href="#getting-started">Getting Started</a> •
+  <a href="#screenshots">Screenshots</a>
+</p>
+
+---
+
+## 🚀 Overview
+
+**Archie** is an advanced, AI-powered system architecture design tool that allows engineers and architects to build, auto-layout, and evaluate complex system diagrams instantly. By simply describing your flow chart or system requirements, Archie generates a node-based architecture, scores its efficiency, and provides an interactive canvas to refine the design.
+
+## ✨ Features
+
+- **🧠 AI-Powered Diagram Generation**: Describe your system architecture in plain text, and let Archie's AI automatically construct the flow chart.
+- **📊 Real-Time Scoring System**: Each architecture is evaluated and scored out of 100 based on efficiency, scalability, and best practices.
+- **📁 Advanced Workspace Management**: Organize your projects with custom-colored folders, pin your most important architectures, and search across your entire workspace effortlessly.
+- **🎨 Interactive Node Editor**: Drag-and-drop canvas powered by React Flow with custom shapes (Process, Decision, I/O) and connection types (Synchronous, Asynchronous).
+- **🪄 Auto-Layout**: Instantly organize chaotic diagrams into clean, symmetrical layouts with a single click.
+- **🔒 Secure Authentication**: Robust user authentication and session management handled via Supabase.
+- **🌗 Stunning UI/UX**: A highly polished, dark-mode native interface featuring smooth `framer-motion` animations, glassmorphism, and a premium aesthetic.
 
 ## 🛠️ Tech Stack
 
-- **Framework:** Next.js 16 (App Router)
-- **UI & Styling:** Tailwind CSS v4, Lucide React
-- **Diagramming:** React Flow (`@xyflow/react`), Dagre for auto-layout
-- **AI Integration:** Google Gemini (`@ai-sdk/google`), Vercel AI SDK
-- **State Management:** Zustand
-- **Database & Auth:** Supabase
-- **Validation:** Zod
+Archie is built using a modern, scalable web stack:
 
-## 🚀 Getting Started
+- **Framework**: [Next.js 14](https://nextjs.org/) (App Router, Server Actions)
+- **Database & Auth**: [Supabase](https://supabase.com/) (PostgreSQL)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Canvas / Diagramming**: [React Flow](https://reactflow.dev/)
+- **Icons**: [Lucide React](https://lucide.dev/)
 
-First, ensure you have your environment variables set up, particularly your Google Gemini API key and Supabase credentials in `.env.local`:
+## 📸 Screenshots
 
-```env
-GOOGLE_GENERATIVE_AI_API_KEY=your_gemini_api_key
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
+### The Workspace Dashboard
+Organize your projects efficiently with folders, pinning, and real-time search.
+<div align="center">
+  <img src="public/assets/dashboard.png" alt="Workspace Dashboard" width="100%" />
+</div>
 
-Then, install the dependencies and run the development server:
+### The AI Architecture Editor
+Design systems manually or describe them to the AI to generate complex flow charts instantly.
+<div align="center">
+  <img src="public/assets/editor.png" alt="Architecture Editor" width="100%" />
+</div>
 
-```bash
-npm install
-npm run dev
-```
+## 🏁 Getting Started
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to start designing architectures!
+### Prerequisites
+- Node.js 18.x or later
+- A Supabase account and project
 
-## 🧠 How it Works
+### Installation
 
-1. **Prompt:** Enter your system requirements in the Command Bar.
-2. **AI Generation:** The backend uses `gemini-3.6-flash` and strict Zod schemas to guarantee a structured JSON response containing nodes (with categories, icons, bottleneck risks) and logical edges (synchronous or dynamic flows).
-3. **Rendering:** Zustand manages the state while React Flow handles rendering the nodes. Dagre automatically calculates the most optimal layout for the generated graph.
-4. **Refinement:** Select any node and issue an edit command. The AI understands the context of the focused node and modifies the JSON graph accordingly.
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/walshdsouza/Archie.git
+   cd Archie
+   ```
 
-## 🤝 Contributing
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-Contributions, issues, and feature requests are welcome! Feel free to check the issues page.
+3. **Set up environment variables**
+   Create a `.env.local` file in the root directory and add your Supabase credentials:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open the app**
+   Visit [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+<div align="center">
+  Built with ❤️ for Software Architects.
+</div>
