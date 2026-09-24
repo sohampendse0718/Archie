@@ -43,6 +43,14 @@ html, body, :root {
   height: 100%;
   margin: 0;
   padding: 0;
+  /* Hide scrollbar while keeping scroll functional */
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE / Edge */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;                /* Chrome / Safari / Opera */
 }
 
 body {

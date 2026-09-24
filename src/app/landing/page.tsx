@@ -286,7 +286,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="relative min-h-screen bg-bg text-fg overflow-x-hidden">
+    <div className="relative min-h-screen bg-bg text-fg overflow-x-hidden no-scrollbar">
 
       {/* NAV BAR */}
       <motion.header
