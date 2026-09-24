@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import ArchieLogo, { ArchieIcon } from '@/components/Logo';
 import { Mail, Lock, Eye, EyeOff, Zap, Shield, Brain, AlertCircle } from 'lucide-react';
@@ -46,7 +47,7 @@ export default function LoginPage() {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        router.push('/');
+        router.push('/dashboard');
         router.refresh();
       }
     } catch (err: unknown) {
@@ -78,7 +79,9 @@ export default function LoginPage() {
       
       {/* Top Bar with Logo */}
       <div className="absolute top-0 left-0 w-full p-6 lg:p-8 flex items-center justify-between z-20">
-        <ArchieLogo size="md" />
+        <Link href="/landing">
+          <ArchieLogo size="md" />
+        </Link>
       </div>
 
       {/* Schematic lines / nodes overlay */}

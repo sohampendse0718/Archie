@@ -2,19 +2,19 @@
 
 import { useRef } from 'react';
 import Link from 'next/link';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, type Variants } from 'framer-motion';
 import { ArrowLeft, Check, X, ChevronRight } from 'lucide-react';
 import ArchieLogo from '@/components/Logo';
 
 /* ─────────────────────────────────────────────────
    Shared animation variants
 ───────────────────────────────────────────────── */
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 28 },
   visible: (delay: number = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay },
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as [number, number, number, number], delay },
   }),
 };
 

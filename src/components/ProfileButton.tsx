@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Settings } from 'lucide-react';
+import { Settings, LogOut } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
 
 function getInitials(name?: string | null, email?: string | null): string {
@@ -37,6 +37,12 @@ export default function ProfileButton() {
     return () => document.removeEventListener('keydown', handler);
   }, [open]);
 
+  const handleSignOut = async () => {
+    setOpen(false);
+    await supabase.auth.signOut();
+    router.push('/landing');
+    router.refresh();
+  };
 
   if (!user) return null;
 
@@ -130,6 +136,24 @@ export default function ProfileButton() {
             >
               <Settings size={14} style={{ color: 'var(--muted)', flexShrink: 0 }} />
               Settings & Appearance
+            </button>
+
+            <div style={{ height: 1, background: 'var(--border-c)', margin: '4px 0' }} />
+
+            <button
+              id="btn-profile-signout"
+              onClick={handleSignOut}
+              style={{
+                width: '100%', display: 'flex', alignItems: 'center', gap: 10,
+                padding: '9px 12px', border: 'none', borderRadius: 8,
+                background: 'transparent', cursor: 'pointer', fontFamily: 'inherit',
+                fontSize: 13, fontWeight: 500, color: '#ef4444', textAlign: 'left',
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(239, 68, 68, 0.1)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
+            >
+              <LogOut size={14} style={{ color: '#ef4444', flexShrink: 0 }} />
+              Sign Out
             </button>
           </div>
         </div>

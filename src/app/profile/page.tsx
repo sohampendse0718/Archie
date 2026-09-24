@@ -41,7 +41,7 @@ export default function ProfilePage() {
   const handleSignOut = async () => {
     setSigningOut(true);
     await supabase.auth.signOut();
-    router.push('/login');
+    router.push('/landing');
     router.refresh();
   };
 
@@ -180,7 +180,7 @@ export default function ProfilePage() {
           <div className="px-6 py-5 flex items-center justify-between gap-4">
             <div>
               <p className="text-[13px] font-semibold text-zinc-900 dark:text-zinc-100 m-0">Sign out</p>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 mb-0">Redirects to login page</p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 mb-0">Redirects to landing page</p>
             </div>
             <button
               id="btn-profile-signout"

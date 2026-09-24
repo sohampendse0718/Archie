@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import ArchieLogo from '@/components/Logo';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/components/AuthProvider';
 
 /* ─────────────────────────────────────────────────
    Shared animation variants
@@ -33,7 +34,7 @@ const fadeUp: Variants = {
   visible: (delay: number = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay },
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as [number, number, number, number], delay },
   }),
 };
 
@@ -248,6 +249,7 @@ function DemoImageCard({
    MAIN PAGE
 ───────────────────────────────────────────────── */
 export default function LandingPage() {
+  const { user } = useAuth();
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
   const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
@@ -306,18 +308,29 @@ export default function LandingPage() {
           <Link href="/pricing" className="hover:text-fg transition-colors duration-200">Pricing</Link>
         </nav>
         <div className="relative z-10 flex items-center gap-3">
-          <Link
-            href="/login"
-            className="hidden sm:inline-flex items-center px-4 py-1.5 rounded-xl text-sm font-medium text-muted hover:text-fg border border-white/[0.08] hover:border-white/20 bg-white/[0.03] hover:bg-white/[0.06] transition-all duration-200"
-          >
-            Log in
-          </Link>
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-sm font-semibold text-bg bg-fg hover:bg-fg/90 transition-all duration-200 shadow-sm"
-          >
-            Sign up <ChevronRight className="w-3.5 h-3.5" />
-          </Link>
+          {user ? (
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-sm font-semibold text-bg bg-fg hover:bg-fg/90 transition-all duration-200 shadow-sm"
+            >
+              Go to Dashboard <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="hidden sm:inline-flex items-center px-4 py-1.5 rounded-xl text-sm font-medium text-muted hover:text-fg border border-white/[0.08] hover:border-white/20 bg-white/[0.03] hover:bg-white/[0.06] transition-all duration-200"
+              >
+                Log in
+              </Link>
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-sm font-semibold text-bg bg-fg hover:bg-fg/90 transition-all duration-200 shadow-sm"
+              >
+                Sign up <ChevronRight className="w-3.5 h-3.5" />
+              </Link>
+            </>
+          )}
         </div>
       </motion.header>
 
@@ -377,10 +390,10 @@ export default function LandingPage() {
             className="flex flex-col sm:flex-row items-center gap-4 mt-2"
           >
             <Link
-              href="/login"
+              href={user ? "/dashboard" : "/login"}
               className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-base font-semibold text-bg bg-fg hover:bg-fg/90 transition-all duration-200 shadow-sm hover:-translate-y-0.5"
             >
-              Start Designing for Free
+              {user ? 'Open Dashboard' : 'Start Designing for Free'}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
             </Link>
             <a
@@ -524,10 +537,10 @@ export default function LandingPage() {
           </div>
           <RevealSection delay={0.3} className="flex justify-center mt-14">
             <Link
-              href="/login"
+              href={user ? "/dashboard" : "/login"}
               className="group inline-flex items-center gap-2.5 px-8 py-4 rounded-xl text-base font-semibold text-bg bg-fg hover:bg-fg/90 shadow-sm transition-all duration-200 hover:-translate-y-0.5"
             >
-              Try Archie for free
+              {user ? 'Open Dashboard' : 'Try Archie for free'}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
             </Link>
           </RevealSection>

@@ -29,10 +29,10 @@ export async function proxy(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   const { pathname } = request.nextUrl;
 
-  // Redirect root → dashboard
+  // Redirect root → landing
   if (pathname === '/') {
     const url = request.nextUrl.clone();
-    url.pathname = user ? '/dashboard' : '/landing';
+    url.pathname = '/landing';
     return NextResponse.redirect(url);
   }
 
