@@ -7,6 +7,7 @@ import { ArrowLeft, LogOut, Sun, Moon, Sparkles, Mail, Shield, User, Upload, Ale
 import { useSettingsStore } from '@/store/useSettingsStore';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import ArchieLogo from '@/components/Logo';
 
 function getInitials(name?: string | null, email?: string | null): string {
   if (name && name.trim()) {
@@ -58,21 +59,17 @@ export default function ProfilePage() {
       </div>
 
       {/* Header */}
-      <header className="shrink-0 sticky top-0 z-50 h-[72px] px-6 bg-surface/80 backdrop-blur-xl border-b border-border-c shadow-[0_8px_30px_rgb(0,0,0,0.4)] flex items-center justify-between">
-        <div className="flex items-center gap-3 relative z-10">
+      <header className="shrink-0 sticky top-0 z-50 h-[72px] px-6 bg-surface/80 backdrop-blur-xl border-b border-border-c shadow-[0_8px_30px_rgb(0,0,0,0.4)] flex items-center">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => router.back()}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-transparent border border-border-c rounded-lg text-[13px] font-medium text-muted hover:text-fg hover:bg-surface-2 transition-colors cursor-pointer"
           >
             <ArrowLeft size={14} /> Back
           </button>
-          <div className="w-px h-[18px] bg-border-c mx-1" />
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-indigo-500/12 border border-indigo-500/25 flex items-center justify-center">
-              <Sparkles size={13} className="text-indigo-400" />
-            </div>
-            <span className="text-sm font-semibold text-fg">Settings</span>
-          </div>
+          <div className="w-px h-[18px] bg-border-c" />
+          <ArchieLogo size="md" iconOnly />
+          <span className="text-sm font-semibold text-fg">Settings</span>
         </div>
       </header>
 
