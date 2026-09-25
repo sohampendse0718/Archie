@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { Settings, LogOut } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
@@ -19,6 +20,7 @@ export default function ProfileButton() {
   const { user, supabase } = useAuth();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -62,7 +64,8 @@ export default function ProfileButton() {
   const providerLabel = provider === 'google' ? 'Google' : provider === 'github' ? 'GitHub' : 'Email';
 
   return (
-    <div ref={ref} style={{ position: 'relative' }}>
+    <>
+      <div ref={ref} style={{ position: 'relative' }}>
       {/* Trigger */}
       <button
         id="btn-profile"
@@ -142,7 +145,7 @@ export default function ProfileButton() {
 
             <button
               id="btn-profile-signout"
-              onClick={handleSignOut}
+              onClick={() => { setOpen(false); setShowConfirm(true); }}
               style={{
                 width: '100%', display: 'flex', alignItems: 'center', gap: 10,
                 padding: '9px 12px', border: 'none', borderRadius: 8,
@@ -159,5 +162,67 @@ export default function ProfileButton() {
         </div>
       )}
     </div>
+
+      {/* Sign-out confirmation portal — rendered on document.body to escape any ancestor stacking context */}
+      {showConfirm && createPortal(
+        <>
+          <style>{`
+            @keyframes _so_fade { from { opacity:0 } to { opacity:1 } }
+            @keyframes _so_pop  { from { opacity:0; transform:scale(0.9) translateY(-10px) } to { opacity:1; transform:scale(1) translateY(0) } }
+          `}</style>
+          <div style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            zIndex: 99999,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            backgroundColor: 'rgba(0,0,0,0.65)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            animation: '_so_fade 0.18s ease forwards',
+          }}>
+            <div style={{
+              background: '#18181b',
+              border: '1px solid #3f3f46',
+              borderRadius: 16,
+              padding: '28px 28px 24px',
+              width: '100%', maxWidth: 360,
+              margin: '0 16px',
+              boxShadow: '0 8px 40px rgba(0,0,0,0.7)',
+              display: 'flex', flexDirection: 'column', gap: 8,
+              animation: '_so_pop 0.22s cubic-bezier(0.34,1.56,0.64,1) forwards',
+            }}>
+              <p style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#ededed' }}>Sign Out</p>
+              <p style={{ margin: '4px 0 20px', fontSize: 13, color: '#71717a', lineHeight: 1.5 }}>
+                Are you sure you want to sign out?
+              </p>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+                <button
+                  onClick={() => setShowConfirm(false)}
+                  style={{
+                    padding: '8px 18px', borderRadius: 8,
+                    border: '1px solid #3f3f46',
+                    background: '#27272a', cursor: 'pointer', fontFamily: 'inherit',
+                    fontSize: 13, fontWeight: 500, color: '#ededed',
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSignOut}
+                  style={{
+                    padding: '8px 18px', borderRadius: 8,
+                    border: '1px solid rgba(239,68,68,0.3)',
+                    background: 'rgba(239,68,68,0.1)', cursor: 'pointer', fontFamily: 'inherit',
+                    fontSize: 13, fontWeight: 500, color: '#ef4444',
+                  }}
+                >
+                  Sign Out
+                </button>
+              </div>
+            </div>
+          </div>
+        </>,
+        document.body
+      )}
+    </>
   );
 }
