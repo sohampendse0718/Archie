@@ -33,7 +33,7 @@ export const ArchitectureEdgeSchema = z.object({
 }).describe("Do not create multiple edges between the exact same source and target nodes. If multiple protocols or data flows exist between two nodes, combine them into a single edge and combine the labels (e.g., 'HTTPS & WSS').");
 
 export const ArchitectureResponseSchema = z.object({
-  architectureScore: z.number().min(0).max(100).describe("Overall system design score from 0 to 100"),
+  architectureScore: z.number().int().min(0).max(100).describe("Overall system design score from 0 to 100"),
   scoreReasoning: z.string().describe("High-level architectural evaluation summary"),
   strengths: z.array(z.string()).describe("2-3 key architectural strengths of this design"),
   weaknesses: z.array(z.string()).describe("1-3 key architectural vulnerabilities or missing components"),
@@ -64,7 +64,7 @@ export const FlowchartEdgeSchema = z.object({
 });
 
 export const FlowchartResponseSchema = z.object({
-  architectureScore: z.number().min(0).max(100).describe("Overall flow design quality score"),
+  architectureScore: z.number().int().min(0).max(100).describe("Overall flow design quality score"),
   scoreReasoning: z.string().describe("Evaluation of the flowchart completeness and clarity"),
   strengths: z.array(z.string()).describe("2-3 strengths of this flow design"),
   weaknesses: z.array(z.string()).describe("1-3 weaknesses or missing paths"),
@@ -100,7 +100,7 @@ export const EREdgeSchema = z.object({
 });
 
 export const ERResponseSchema = z.object({
-  architectureScore: z.number().min(0).max(100).describe("Database design quality score"),
+  architectureScore: z.number().int().min(0).max(100).describe("Database design quality score"),
   scoreReasoning: z.string().describe("Evaluation of normalization, indexing strategy, and relationships"),
   strengths: z.array(z.string()).describe("2-3 strengths of this schema design"),
   weaknesses: z.array(z.string()).describe("1-3 missing indexes, normalization issues, or design weaknesses"),
@@ -131,7 +131,7 @@ export const SequenceEdgeSchema = z.object({
 });
 
 export const SequenceResponseSchema = z.object({
-  architectureScore: z.number().min(0).max(100).describe("Sequence flow quality score"),
+  architectureScore: z.number().int().min(0).max(100).describe("Sequence flow quality score"),
   scoreReasoning: z.string().describe("Evaluation of the interaction flow clarity and completeness"),
   strengths: z.array(z.string()).describe("2-3 strengths of this interaction design"),
   weaknesses: z.array(z.string()).describe("1-3 missing error paths or incomplete flows"),
@@ -165,7 +165,7 @@ export const BPMNEdgeSchema = z.object({
 });
 
 export const BPMNResponseSchema = z.object({
-  architectureScore: z.number().min(0).max(100).describe("Business process quality score"),
+  architectureScore: z.number().int().min(0).max(100).describe("Business process quality score"),
   scoreReasoning: z.string().describe("Evaluation of process completeness and BPMN correctness"),
   strengths: z.array(z.string()).describe("2-3 strengths of this process design"),
   weaknesses: z.array(z.string()).describe("1-3 missing steps or process gaps"),
@@ -194,7 +194,7 @@ export const DocumentEdgeSchema = z.object({
 });
 
 export const DocumentResponseSchema = z.object({
-  architectureScore: z.number().min(0).max(100).describe("Document structure quality score"),
+  architectureScore: z.number().int().min(0).max(100).describe("Document structure quality score"),
   scoreReasoning: z.string().describe("Evaluation of document organization and completeness"),
   strengths: z.array(z.string()).describe("2-3 strengths of this document structure"),
   weaknesses: z.array(z.string()).describe("1-3 missing sections or structural issues"),

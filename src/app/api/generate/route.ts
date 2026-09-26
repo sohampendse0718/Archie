@@ -96,9 +96,9 @@ export async function POST(req: Request) {
           system: systemPrompt,
         });
         if (result?.object) break;
-      } catch (err) {
+      } catch (err: any) {
         lastError = err;
-        console.warn(`Model '${modelName}' failed during generation, trying next model fallback...`, err);
+        console.warn(`Model '${modelName}' failed during generation: ${err?.message || 'Unknown error'}, trying next model fallback...`);
       }
     }
 
