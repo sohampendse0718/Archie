@@ -27,10 +27,10 @@ export const DIAGRAM_TYPES: DiagramType[] = [
   },
   {
     id: 'er',
-    label: 'Entity Relationship',
+    label: 'Database Schema',
     icon: Database,
-    description: 'Database schema & relations',
-    systemPromptHint: 'Create an Entity-Relationship diagram showing database tables, columns, primary keys, foreign keys, and relationships (one-to-many, many-to-many).',
+    description: 'Tables, keys, and relationships',
+    systemPromptHint: 'Create a Database Schema diagram showing database tables, columns, primary keys, foreign keys, and relationships (one-to-many, many-to-many).',
   },
   {
     id: 'sequence',

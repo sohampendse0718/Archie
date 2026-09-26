@@ -74,7 +74,7 @@ export const FlowchartResponseSchema = z.object({
 });
 
 // ═══════════════════════════════════════════════
-// Entity-Relationship Schema
+// Database Schema
 // ═══════════════════════════════════════════════
 
 export const ERAttributeSchema = z.object({

@@ -19,7 +19,7 @@ Use these shapes correctly:
 Connect nodes in logical flow order. For decision nodes, always label the outgoing edges with the conditions.
 Generate 8-15 nodes for a comprehensive flowchart. Ensure all node and edge IDs are unique strings.`,
 
-  er: `You are an expert database designer. Create a detailed Entity-Relationship diagram based on the user's prompt.
+  er: `You are an expert database designer. Create a detailed Database Schema diagram based on the user's prompt.
 For each entity (table), include 4-8 realistic attributes with proper SQL data types.
 Mark primary keys (isPrimaryKey: true) and foreign keys (isForeignKey: true) correctly.
 Use proper relationship labels on edges: '1:1', '1:N', 'N:M', 'has_many', 'belongs_to'.
