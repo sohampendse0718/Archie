@@ -33,6 +33,8 @@ export default function InspectorPanel() {
   const [description, setDescription] = useState('');
   const [purpose, setPurpose] = useState('');
   const [bottleneckRisk, setBottleneckRisk] = useState('');
+  const [erdType, setErdType] = useState('entity');
+  const [dataType, setDataType] = useState('');
 
   // AI edit states
   const [aiPrompt, setAiPrompt] = useState('');
@@ -51,6 +53,8 @@ export default function InspectorPanel() {
       setDescription(data.description || '');
       setPurpose(data.purpose || '');
       setBottleneckRisk(data.bottleneckRisk || '');
+      setErdType(data.erdType || 'entity');
+      setDataType(data.dataType || '');
     }
   }, [selectedNode?.id]);
 
@@ -119,15 +123,26 @@ export default function InspectorPanel() {
 
   const isFailed = failedNodes.includes(node.id);
 
+  const isErdNode = node.type === 'erdNode';
+
   const handleManualSave = (e: React.FormEvent) => {
     e.preventDefault();
-    updateNodeData(node.id, {
-      label,
-      category,
-      description,
-      purpose,
-      bottleneckRisk: bottleneckRisk.trim() || undefined,
-    });
+    if (isErdNode) {
+      updateNodeData(node.id, {
+        label,
+        erdType: erdType as any,
+        description,
+        dataType: dataType.trim() || undefined,
+      } as any);
+    } else {
+      updateNodeData(node.id, {
+        label,
+        category,
+        description,
+        purpose,
+        bottleneckRisk: bottleneckRisk.trim() || undefined,
+      });
+    }
     setEditMode('view');
   };
 
@@ -216,9 +231,15 @@ export default function InspectorPanel() {
         {editMode === 'view' ? (
           <div>
             <h2 className="text-fg font-semibold tracking-tight leading-snug">{nodeData.label}</h2>
-            <span className="text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 mt-1.5 inline-block capitalize">
-              {nodeData.category}
-            </span>
+            {isErdNode ? (
+              <span className="text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 mt-1.5 inline-block capitalize">
+                {String(nodeData.erdType || 'entity').replace(/_/g, ' ')}
+              </span>
+            ) : (
+              <span className="text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 mt-1.5 inline-block capitalize">
+                {nodeData.category}
+              </span>
+            )}
           </div>
         ) : (
           <div>
@@ -298,7 +319,7 @@ export default function InspectorPanel() {
         {editMode === 'manual' && (
           <form id="node-edit-form" onSubmit={handleManualSave} className="space-y-3.5">
             <div>
-              <label className="block text-xs font-semibold text-muted mb-1">Component Name</label>
+              <label className="block text-xs font-semibold text-muted mb-1">{isErdNode ? 'Label' : 'Component Name'}</label>
               <input
                 type="text"
                 required
@@ -308,53 +329,98 @@ export default function InspectorPanel() {
               />
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-muted mb-1">Category</label>
-              <select
-                value={category}
-                onChange={e => setCategory(e.target.value)}
-                className="w-full bg-surface-2/60 border border-border-c focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors capitalize"
-              >
-                <option value="frontend">Frontend</option>
-                <option value="backend">Backend</option>
-                <option value="database">Database</option>
-                <option value="ai">AI</option>
-                <option value="infrastructure">Infrastructure</option>
-              </select>
-            </div>
+            {isErdNode ? (
+              <>
+                <div>
+                  <label className="block text-xs font-semibold text-muted mb-1">ER Element Type</label>
+                  <select
+                    value={erdType}
+                    onChange={e => setErdType(e.target.value)}
+                    className="w-full bg-surface-2/60 border border-border-c focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors"
+                  >
+                    <option value="entity">Entity (Strong)</option>
+                    <option value="weak_entity">Weak Entity</option>
+                    <option value="relationship">Relationship</option>
+                    <option value="identifying_relationship">Identifying Relationship</option>
+                    <option value="attribute">Attribute</option>
+                    <option value="key_attribute">Key Attribute (PK)</option>
+                    <option value="multivalued_attribute">Multivalued Attribute</option>
+                    <option value="derived_attribute">Derived Attribute</option>
+                  </select>
+                </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-muted mb-1">Description</label>
-              <textarea
-                required
-                rows={3}
-                value={description}
-                onChange={e => setDescription(e.target.value)}
-                className="w-full bg-surface-2/60 border border-border-c focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors resize-none"
-              />
-            </div>
+                <div>
+                  <label className="block text-xs font-semibold text-muted mb-1">Data Type (optional)</label>
+                  <input
+                    type="text"
+                    value={dataType}
+                    onChange={e => setDataType(e.target.value)}
+                    placeholder="e.g. INT, VARCHAR(255), DATE"
+                    className="w-full bg-surface-2/60 border border-border-c focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors"
+                  />
+                </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-muted mb-1">Purpose</label>
-              <textarea
-                required
-                rows={2}
-                value={purpose}
-                onChange={e => setPurpose(e.target.value)}
-                className="w-full bg-surface-2/60 border border-border-c focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors resize-none"
-              />
-            </div>
+                <div>
+                  <label className="block text-xs font-semibold text-muted mb-1">Description / Notes</label>
+                  <textarea
+                    rows={2}
+                    value={description}
+                    onChange={e => setDescription(e.target.value)}
+                    className="w-full bg-surface-2/60 border border-border-c focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors resize-none"
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <label className="block text-xs font-semibold text-muted mb-1">Category</label>
+                  <select
+                    value={category}
+                    onChange={e => setCategory(e.target.value)}
+                    className="w-full bg-surface-2/60 border border-border-c focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors capitalize"
+                  >
+                    <option value="frontend">Frontend</option>
+                    <option value="backend">Backend</option>
+                    <option value="database">Database</option>
+                    <option value="ai">AI</option>
+                    <option value="infrastructure">Infrastructure</option>
+                  </select>
+                </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-muted mb-1">Bottleneck Risk (Optional)</label>
-              <textarea
-                rows={2}
-                value={bottleneckRisk}
-                onChange={e => setBottleneckRisk(e.target.value)}
-                placeholder="No serious bottleneck risk"
-                className="w-full bg-surface-2/60 border border-border-c focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors resize-none"
-              />
-            </div>
+                <div>
+                  <label className="block text-xs font-semibold text-muted mb-1">Description</label>
+                  <textarea
+                    required
+                    rows={3}
+                    value={description}
+                    onChange={e => setDescription(e.target.value)}
+                    className="w-full bg-surface-2/60 border border-border-c focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors resize-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-muted mb-1">Purpose</label>
+                  <textarea
+                    required
+                    rows={2}
+                    value={purpose}
+                    onChange={e => setPurpose(e.target.value)}
+                    className="w-full bg-surface-2/60 border border-border-c focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors resize-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-muted mb-1">Bottleneck Risk (Optional)</label>
+                  <textarea
+                    rows={2}
+                    value={bottleneckRisk}
+                    onChange={e => setBottleneckRisk(e.target.value)}
+                    placeholder="No serious bottleneck risk"
+                    className="w-full bg-surface-2/60 border border-border-c focus:border-accent rounded-lg p-2.5 text-fg outline-none transition-colors resize-none"
+                  />
+                </div>
+              </>
+            )}
 
             <div className="flex gap-2 pt-2">
               <button

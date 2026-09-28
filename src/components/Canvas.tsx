@@ -26,40 +26,65 @@ const defaultEdgeOptions = {
 };
 
 function CanvasInner() {
-  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, setSelectedNode, setSelectedEdge, failedNodes, degradedNodes, setNodes } = useDiagramStore();
+  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, setSelectedNode, setSelectedEdge, failedNodes, degradedNodes, setNodes, lastGeneratedAt } = useDiagramStore();
   const { zoomIn, zoomOut, fitView, screenToFlowPosition } = useReactFlow();
   const { theme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // ── Auto-fit viewport every time the diagram is (re)generated ────────────
+  useEffect(() => {
+    if (!lastGeneratedAt) return;
+    // Small delay lets React flush the new nodes before measuring
+    const timer = setTimeout(() => {
+      fitView({ duration: 600, padding: 0.08 });
+    }, 80);
+    return () => clearTimeout(timer);
+  }, [lastGeneratedAt, fitView]);
+
+  const isERD = nodes.some(n => n.type === 'erdNode');
+
   const styledEdges = edges.map(edge => {
     let newEdge = { ...edge };
-    let isAnimated = edge.animated !== false; // true by default
+    let isAnimated = edge.animated !== false;
 
     if (failedNodes.includes(edge.target)) {
       newEdge = {
         ...newEdge,
         animated: false,
-        style: { ...newEdge.style, stroke: '#ef4444', filter: 'drop-shadow(0 0 5px rgba(239, 68, 68, 0.4))' }
+        style: { ...newEdge.style, stroke: '#ef4444', filter: 'drop-shadow(0 0 5px rgba(239, 68, 68, 0.4))' },
       };
       isAnimated = false;
     } else if (degradedNodes.includes(edge.target)) {
       newEdge = {
         ...newEdge,
-        style: { ...newEdge.style, stroke: '#f59e0b', filter: 'drop-shadow(0 0 5px rgba(245, 158, 11, 0.4))' }
+        style: { ...newEdge.style, stroke: '#f59e0b', filter: 'drop-shadow(0 0 5px rgba(245, 158, 11, 0.4))' },
       };
     }
-    
+
+    // ERD edges: thinner, muted grey so shapes are the focus
+    const erdEdgeStyle = isERD ? {
+      stroke: 'rgba(148,163,184,0.7)',
+      strokeWidth: 1.5,
+      filter: 'none',
+    } : {};
+
     return {
       ...newEdge,
+      // Always use smoothstep so edges bend like hand-drawn lines
+      type: newEdge.type ?? 'smoothstep',
       style: {
         stroke: 'var(--accent)',
         ...newEdge.style,
         strokeWidth: 2,
-        ...(isAnimated ? { strokeDasharray: '6,6' } : {})
+        ...(isAnimated && !isERD ? { strokeDasharray: '6,6' } : {}),
+        ...erdEdgeStyle,
       },
-      labelStyle: { fill: 'var(--muted)', fontWeight: 600 },
-      labelBgStyle: { fill: 'var(--bg)', fillOpacity: 1 },
-      labelBgBorderRadius: 0
+      // ERD edges are static, not animated
+      animated: isERD ? false : (newEdge.animated !== false),
+      labelStyle: { fill: 'var(--muted)', fontWeight: 600, fontSize: 11 },
+      labelBgStyle: { fill: 'var(--bg)', fillOpacity: 0.85 },
+      labelBgPadding: [4, 3] as [number, number],
+      labelBgBorderRadius: 3,
     };
   });
 
@@ -156,14 +181,28 @@ function CanvasInner() {
             ...(shape === 'gateway' ? { gatewayType: (variant ?? 'exclusive') as 'exclusive' | 'parallel' | 'inclusive' } : {}),
           },
         };
-      } else if (nodeTypeKey === 'document') {
-        const level = parseInt(parts[1] ?? '1', 10) as 1 | 2 | 3;
-        const levelLabels: Record<number, string> = { 1: 'New Section', 2: 'Sub-section', 3: 'Detail Item' };
+      } else if (nodeTypeKey === 'erd') {
+        const erdType = parts[1] ?? 'entity';
+        const labelDefaults: Record<string, string> = {
+          entity: 'Entity',
+          weak_entity: 'Weak Entity',
+          relationship: 'Relationship',
+          identifying_relationship: 'Identifying Rel.',
+          attribute: 'attribute',
+          key_attribute: 'id (PK)',
+          multivalued_attribute: 'phones',
+          derived_attribute: 'age',
+        };
         newNode = {
           id: crypto.randomUUID(),
-          type: 'document',
+          type: 'erdNode',
           position,
-          data: { label: levelLabels[level] ?? 'Section', level },
+          data: {
+            label: labelDefaults[erdType] ?? 'Node',
+            erdType: erdType as
+              | 'entity' | 'weak_entity' | 'relationship' | 'identifying_relationship'
+              | 'attribute' | 'key_attribute' | 'multivalued_attribute' | 'derived_attribute',
+          },
         };
       } else {
         // Fallback — legacy plain type string
@@ -239,10 +278,10 @@ function CanvasInner() {
         onDragOver={onDragOver}
         nodeTypes={nodeTypes}
         defaultEdgeOptions={defaultEdgeOptions}
-        minZoom={0.1}
+        minZoom={0.05}
         maxZoom={4}
         fitView
-        fitViewOptions={{ padding: 0.2, maxZoom: 1 }}
+        fitViewOptions={{ padding: 0.08 }}
         colorMode={theme === 'dark' ? 'dark' : 'light'}
         className="bg-transparent"
       >

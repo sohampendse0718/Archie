@@ -253,7 +253,10 @@ export default function EditorPage() {
         {/* Right — Actions */}
         <div className="flex items-center gap-2 shrink-0">
           <button
-            onClick={() => applyAutoLayout('TB')}
+            onClick={() => {
+              const hasSequence = nodes.some(n => n.type === 'sequence');
+              applyAutoLayout(hasSequence ? 'LR' : 'TB');
+            }}
             className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-muted bg-surface-2 hover:bg-surface hover:text-fg rounded-lg border border-border-c transition-colors shadow-sm"
           >
             <Layout className="w-4 h-4" />

@@ -44,13 +44,27 @@ Use these element types correctly:
 Every BPMN diagram must start with a Start event and end with an End event.
 Generate 8-15 elements with proper flow connections. Ensure all node and edge IDs are unique strings.`,
 
-  document: `You are an expert technical writer and documentation architect. Create a structured document outline based on the user's prompt.
-Organize the document into a clear hierarchy:
-- Level 1: Main sections (high-level topics)
-- Level 2: Sub-sections (detailed topics within a section)
-- Level 3: Detail items (specific content blocks)
-Connect sections with edges showing their relationship: 'contains' for hierarchy, 'references' for cross-references, 'depends on' for prerequisites.
-Include 8-12 sections with a mix of all three levels. Ensure all node and edge IDs are unique strings.`,
+  erd: `You are an expert database architect specializing in conceptual modeling using Chen's Entity-Relationship (ER) notation.
+Create a conventional, academic ER diagram based on the user's prompt.
+
+Use these node types exactly:
+- 'entity': Strong Entity — a real-world object with independent existence (e.g. Student, Course, Employee)
+- 'weak_entity': Weak Entity — an entity that depends on a strong entity for its existence (e.g. Dependent of Employee)
+- 'relationship': Relationship diamond — connects two or more entities (e.g. Enrolls, Works_In, Manages)
+- 'identifying_relationship': Identifying relationship diamond — connects a strong entity to its weak entity
+- 'attribute': Regular attribute oval — a property of an entity or relationship
+- 'key_attribute': Key attribute oval — the primary identifier of an entity (underlined in textbooks)
+- 'multivalued_attribute': Multivalued attribute (double oval) — can have multiple values (e.g. PhoneNumbers)
+- 'derived_attribute': Derived attribute (dashed oval) — computed from other attributes (e.g. Age from DateOfBirth)
+
+Strict Rules:
+1. Entities are NEVER directly connected to each other. They MUST connect through a relationship node.
+2. Every attribute node must be connected via an edge to its parent entity or relationship node.
+3. Every entity should have at least one key_attribute (primary key).
+4. Edges between entities and relationships must include cardinality labels: '1', 'N', 'M', or structural like '(1,1)', '(0,N)', 'total', 'partial'.
+5. Generate at least 4 strong entities, their key attributes, 2-3 regular attributes each, and 3+ relationships between them.
+6. Ensure all node IDs and edge IDs are unique strings. All edge source/target IDs must reference existing node IDs.
+7. Set animated: false for all edges.`,
 };
 
 // Map from diagram type to the React Flow node type string
@@ -60,7 +74,7 @@ const NODE_TYPE_MAP: Record<DiagramTypeKey, string> = {
   er: 'erEntity',
   sequence: 'sequence',
   bpmn: 'bpmn',
-  document: 'document',
+  erd: 'erdNode',
 };
 
 export async function POST(req: Request) {

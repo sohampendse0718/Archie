@@ -20,10 +20,10 @@ import type { FlowchartNodeData } from '@/components/nodes/FlowchartNode';
 import type { ERNodeData } from '@/components/nodes/ERNode';
 import type { SequenceNodeData } from '@/components/nodes/SequenceNode';
 import type { BPMNNodeData } from '@/components/nodes/BPMNNode';
-import type { DocumentNodeData } from '@/components/nodes/DocumentNode';
+import type { ERDNodeData } from '@/components/nodes/ERDNode';
 
 // Union of all possible node data types
-type AnyNodeData = ArchNodeData | FlowchartNodeData | ERNodeData | SequenceNodeData | BPMNNodeData | DocumentNodeData;
+type AnyNodeData = ArchNodeData | FlowchartNodeData | ERNodeData | SequenceNodeData | BPMNNodeData | ERDNodeData;
 
 // A diagram node can be any registered node type
 export type ArchNode = Node<AnyNodeData>;
@@ -103,15 +103,19 @@ export const useDiagramStore = create<DiagramState>((set, get) => ({
     });
   },
   onConnect: (connection: Connection) => {
+    const state = get();
+    const isERD = state.nodes.some(n => n.type === 'erdNode');
     set({
       edges: addEdge({
         ...connection,
-        animated: true,
-        style: { stroke: '#71717a', strokeWidth: 2, filter: 'drop-shadow(0 0 4px rgba(113,113,122,0.4))' },
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          color: '#71717a',
-        },
+        type: 'smoothstep',
+        animated: !isERD,
+        style: isERD
+          ? { stroke: 'rgba(148,163,184,0.7)', strokeWidth: 1.5 }
+          : { stroke: '#71717a', strokeWidth: 2, filter: 'drop-shadow(0 0 4px rgba(113,113,122,0.4))' },
+        ...(!isERD ? {
+          markerEnd: { type: MarkerType.ArrowClosed, color: '#71717a' },
+        } : {}),
       }, get().edges),
     });
   },

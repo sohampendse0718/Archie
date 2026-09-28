@@ -4,7 +4,7 @@ import FlowchartNode from './FlowchartNode';
 import ERNode from './ERNode';
 import SequenceNode from './SequenceNode';
 import BPMNNode from './BPMNNode';
-import DocumentNode from './DocumentNode';
+import ERDNode from './ERDNode';
 
 export const nodeTypes: NodeTypes = {
   customArch: CustomArchNode,
@@ -12,5 +12,5 @@ export const nodeTypes: NodeTypes = {
   erEntity: ERNode,
   sequence: SequenceNode,
   bpmn: BPMNNode,
-  document: DocumentNode,
+  erdNode: ERDNode,
 };

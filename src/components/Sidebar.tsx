@@ -5,7 +5,7 @@ import {
   GitBranch, Diamond, Circle, ArrowRightLeft,
   Table2, User, Globe, Network,
   PlayCircle, StopCircle, CheckSquare, Cog, GitMerge,
-  FileText, FileCode, FileSearch,
+  Square, Copy, KeyRound, Disc, HelpCircle, Component,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -50,10 +50,15 @@ const PALETTES: Record<string, PaletteItem[]> = {
     { transferData: 'bpmn::gateway::exclusive', label: 'Excl. Gateway',   icon: GitBranch,   style: 'bg-purple-500/10 text-purple-400 border-purple-500/20' },
     { transferData: 'bpmn::gateway::parallel',  label: 'Par. Gateway',    icon: GitMerge,    style: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' },
   ],
-  document: [
-    { transferData: 'document::1', label: 'Section (L1)',    icon: FileText,   style: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
-    { transferData: 'document::2', label: 'Sub-section (L2)',icon: FileCode,   style: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' },
-    { transferData: 'document::3', label: 'Detail (L3)',     icon: FileSearch, style: 'bg-purple-500/10 text-purple-400 border-purple-500/20' },
+  erd: [
+    { transferData: 'erd::entity',                   label: 'Entity',            icon: Square,     style: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
+    { transferData: 'erd::weak_entity',              label: 'Weak Entity',       icon: Copy,       style: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' },
+    { transferData: 'erd::relationship',             label: 'Relationship',      icon: Diamond,    style: 'bg-purple-500/10 text-purple-400 border-purple-500/20' },
+    { transferData: 'erd::identifying_relationship', label: 'Identifying Rel.',  icon: Component,  style: 'bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20' },
+    { transferData: 'erd::attribute',                label: 'Attribute',         icon: Circle,     style: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
+    { transferData: 'erd::key_attribute',            label: 'Key Attribute',     icon: KeyRound,   style: 'bg-amber-500/10 text-amber-400 border-amber-500/20' },
+    { transferData: 'erd::multivalued_attribute',    label: 'Multivalued Attr.', icon: Disc,       style: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' },
+    { transferData: 'erd::derived_attribute',        label: 'Derived Attr.',     icon: HelpCircle, style: 'bg-rose-500/10 text-rose-400 border-rose-500/20' },
   ],
 };
 
@@ -63,7 +68,7 @@ const PALETTE_LABELS: Record<string, string> = {
   er: 'Entities',
   sequence: 'Participants',
   bpmn: 'Elements',
-  document: 'Sections',
+  erd: 'ER Elements',
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────

@@ -202,8 +202,11 @@ export default function CommandBar() {
             eventType: node.eventType,
             gatewayType: node.gatewayType,
           } : {}),
-          // Document-specific
-          ...(nodeType === 'document' ? { level: node.level } : {}),
+          // Conventional ER (Chen) specific
+          ...(nodeType === 'erdNode' ? {
+            erdType: node.erdType,
+            dataType: node.dataType,
+          } : {}),
         },
       }));
 
@@ -225,8 +228,8 @@ export default function CommandBar() {
         tradeoffs: data.tradeoffs,
       });
 
-      // Use LR layout for sequence diagrams, TB for everything else
-      const layoutDirection = diagramTypeKey === 'sequence' ? 'LR' : 'TB';
+      // LR for sequence and ERD (nodes stack vertically = more compact), TB for the rest
+      const layoutDirection = (diagramTypeKey === 'sequence' || diagramTypeKey === 'erd') ? 'LR' : 'TB';
       useDiagramStore.getState().applyAutoLayout(layoutDirection);
       useDiagramStore.getState().setLastGeneratedAt(Date.now());
 

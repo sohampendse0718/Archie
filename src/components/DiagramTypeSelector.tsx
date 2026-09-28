@@ -1,6 +1,6 @@
 "use client";
 
-import { Server, GitBranch, Database, GitCommit, LayoutTemplate, FileText } from 'lucide-react';
+import { Server, GitBranch, Database, GitCommit, LayoutTemplate, Network } from 'lucide-react';
 
 export type DiagramType = {
   id: string;
@@ -47,11 +47,11 @@ export const DIAGRAM_TYPES: DiagramType[] = [
     systemPromptHint: 'Create a BPMN (Business Process Model and Notation) diagram showing the business process flow, tasks, gateways, and participants.',
   },
   {
-    id: 'document',
-    label: 'Document',
-    icon: FileText,
-    description: 'Technical documentation',
-    systemPromptHint: 'Create a structured technical document diagram showing the components, modules, and their documentation structure.',
+    id: 'erd',
+    label: 'ER Diagram (Chen)',
+    icon: Network,
+    description: 'Entities, attributes & relationships',
+    systemPromptHint: 'Create a textbook Entity-Relationship diagram using Chen notation with strong entities, weak entities, relationship diamonds, attributes (key, multivalued, derived), and cardinality ratios (1:1, 1:N, M:N).',
   },
 ];
 

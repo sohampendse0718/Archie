@@ -175,32 +175,46 @@ export const BPMNResponseSchema = z.object({
 });
 
 // ═══════════════════════════════════════════════
-// Document Schema
+// Conventional ER (Chen Notation) Schema
 // ═══════════════════════════════════════════════
 
-export const DocumentNodeSchema = z.object({
+export const ERDNodeTypeSchema = z.enum([
+  'entity',
+  'weak_entity',
+  'relationship',
+  'identifying_relationship',
+  'attribute',
+  'key_attribute',
+  'multivalued_attribute',
+  'derived_attribute',
+]);
+
+export const ERDNodeSchema = z.object({
   id: z.string(),
-  label: z.string().describe("Section heading"),
-  description: z.string().optional().describe("Content summary or key points for this section"),
-  level: z.number().min(1).max(3).describe("Heading level: 1 for top sections, 2 for sub-sections, 3 for detail sections"),
+  label: z.string().describe("Name of the entity, relationship, or attribute"),
+  erdType: ERDNodeTypeSchema.describe(
+    "'entity' for strong entity, 'weak_entity' for weak entity, 'relationship' for relationship diamond, 'identifying_relationship' for identifying relationship double-diamond, 'attribute' for regular oval, 'key_attribute' for underlined primary key oval, 'multivalued_attribute' for double oval, 'derived_attribute' for dashed oval"
+  ),
+  description: z.string().optional().describe("Optional brief description"),
+  dataType: z.string().optional().describe("For attributes: SQL/type info e.g. INT, VARCHAR(255)"),
 });
 
-export const DocumentEdgeSchema = z.object({
+export const ERDEdgeSchema = z.object({
   id: z.string(),
   source: z.string(),
   target: z.string(),
-  label: z.string().optional().describe("Relationship between sections, e.g. 'contains', 'references', 'depends on'"),
-  animated: z.boolean().describe("True for primary hierarchy; false for cross-references"),
+  label: z.string().optional().describe("Cardinality or participation: '1', 'N', 'M', '(1,1)', '(0,N)', 'total', 'partial'"),
+  animated: z.boolean().default(false),
 });
 
-export const DocumentResponseSchema = z.object({
-  architectureScore: z.number().int().min(0).max(100).describe("Document structure quality score"),
-  scoreReasoning: z.string().describe("Evaluation of document organization and completeness"),
-  strengths: z.array(z.string()).describe("2-3 strengths of this document structure"),
-  weaknesses: z.array(z.string()).describe("1-3 missing sections or structural issues"),
-  tradeoffs: z.array(z.string()).describe("1-2 structural trade-offs"),
-  nodes: z.array(DocumentNodeSchema),
-  edges: z.array(DocumentEdgeSchema),
+export const ERDResponseSchema = z.object({
+  architectureScore: z.number().int().min(0).max(100).describe("ER design quality score"),
+  scoreReasoning: z.string().describe("Evaluation of entity completeness, normalization, and relationship accuracy"),
+  strengths: z.array(z.string()).describe("2-3 strengths of this ER design"),
+  weaknesses: z.array(z.string()).describe("1-3 weaknesses or missing entities/attributes"),
+  tradeoffs: z.array(z.string()).describe("1-2 design trade-offs"),
+  nodes: z.array(ERDNodeSchema),
+  edges: z.array(ERDEdgeSchema),
 });
 
 // ═══════════════════════════════════════════════
@@ -213,7 +227,7 @@ export const DIAGRAM_SCHEMAS = {
   er: ERResponseSchema,
   sequence: SequenceResponseSchema,
   bpmn: BPMNResponseSchema,
-  document: DocumentResponseSchema,
+  erd: ERDResponseSchema,
 } as const;
 
 export type DiagramTypeKey = keyof typeof DIAGRAM_SCHEMAS;
