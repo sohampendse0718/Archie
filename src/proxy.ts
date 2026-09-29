@@ -6,6 +6,11 @@ const supabaseAnonKey =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
 
+// Routes that require the user to be signed in
+const PROTECTED_ROUTES = ['/dashboard', '/editor', '/profile'];
+// Routes only for guests — authenticated users get bounced away
+const AUTH_ONLY_ROUTES = ['/login'];
+
 export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -26,28 +31,29 @@ export async function proxy(request: NextRequest) {
     },
   });
 
-  const { data: { user } } = await supabase.auth.getUser();
+  // IMPORTANT: always call getUser() to refresh the session cookie
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   const { pathname } = request.nextUrl;
 
-  // Redirect root → landing
+  // Redirect bare root → landing
   if (pathname === '/') {
     const url = request.nextUrl.clone();
     url.pathname = '/landing';
     return NextResponse.redirect(url);
   }
 
-  // Protect authenticated routes
-  const protectedRoutes = ['/dashboard', '/editor', '/profile'];
-  const isProtected = protectedRoutes.some((r) => pathname.startsWith(r));
-
-  if (isProtected && !user) {
+  // Protect authenticated routes — redirect guests to /login
+  if (!user && PROTECTED_ROUTES.some((r) => pathname.startsWith(r))) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     return NextResponse.redirect(url);
   }
 
-  // Redirect authenticated users away from /login
-  if (user && pathname === '/login') {
+  // Redirect authenticated users away from /login → /dashboard
+  if (user && AUTH_ONLY_ROUTES.some((r) => pathname.startsWith(r))) {
     const url = request.nextUrl.clone();
     url.pathname = '/dashboard';
     return NextResponse.redirect(url);
@@ -58,6 +64,15 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|auth/callback|api/).*)',
+    /*
+     * Match all paths except:
+     * - _next/static  (static files)
+     * - _next/image   (image optimisation)
+     * - favicon.ico
+     * - public assets (*.svg, *.png, *.jpg, etc.)
+     * - API routes (handled independently)
+     * - auth callback (must never be blocked)
+     */
+    '/((?!_next/static|_next/image|favicon\\.ico|logo\\.svg|demo-.*\\.png|.*\\.svg|api/|auth/callback).*)',
   ],
 };
