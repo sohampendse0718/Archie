@@ -25,6 +25,8 @@ export default function ProfilePage() {
   const router = useRouter();
   const [signingOut, setSigningOut] = useState(false);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const { isAutosaveEnabled, setIsAutosaveEnabled } = useSettingsStore();
 
   const displayName =
@@ -44,6 +46,28 @@ export default function ProfilePage() {
     await supabase.auth.signOut();
     router.push('/landing');
     router.refresh();
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      setIsDeleting(true);
+      const res = await fetch('/api/auth/delete-account', {
+        method: 'DELETE',
+      });
+      
+      if (!res.ok) {
+        throw new Error('Failed to delete account');
+      }
+
+      await supabase.auth.signOut();
+      router.push('/landing');
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      alert('Failed to delete account. Ensure your SUPABASE_SERVICE_ROLE_KEY is set in your environment variables.');
+      setIsDeleting(false);
+      setShowDeleteModal(false);
+    }
   };
 
   const sectionHeadClass = "px-5 py-3 border-b border-white/5 text-[11px] font-semibold tracking-[0.08em] uppercase text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5";
@@ -202,7 +226,10 @@ export default function ProfilePage() {
                 Proceed with caution. Once completed, this action cannot be undone and all your data will be permanently deleted.
               </p>
             </div>
-            <button className="shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-lg border border-red-500/20 bg-red-500/10 hover:bg-red-500/20 text-red-700 dark:text-red-400 text-[13px] font-semibold cursor-pointer transition-colors shadow-sm">
+            <button 
+              onClick={() => setShowDeleteModal(true)}
+              className="shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-lg border border-red-500/20 bg-red-500/10 hover:bg-red-500/20 text-red-700 dark:text-red-400 text-[13px] font-semibold cursor-pointer transition-colors shadow-sm"
+            >
               Delete Account
             </button>
           </div>
@@ -235,6 +262,37 @@ export default function ProfilePage() {
                 className="px-4 py-2 text-sm font-medium text-red-500 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 rounded-lg transition-all"
               >
                 Sign Out
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Delete Account Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-zinc-900/80 backdrop-blur-xl border border-red-500/20 rounded-2xl p-6 w-full max-w-sm mx-4 shadow-[0_8px_30px_rgb(0,0,0,0.5)] flex flex-col gap-2"
+          >
+            <h2 className="text-lg font-bold text-red-500 m-0">Delete Account</h2>
+            <p className="text-sm text-zinc-400 mb-4 mt-1">
+              Are you absolutely sure you want to delete your account? This action is irreversible and all your data will be permanently lost.
+            </p>
+            <div className="flex justify-end gap-3 mt-2">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/5 rounded-lg transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                disabled={isDeleting}
+                className="px-4 py-2 text-sm font-medium text-red-500 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 rounded-lg transition-all flex items-center justify-center min-w-[120px]"
+              >
+                {isDeleting ? 'Deleting...' : 'Delete Account'}
               </button>
             </div>
           </motion.div>
