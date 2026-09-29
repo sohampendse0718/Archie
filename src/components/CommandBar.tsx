@@ -6,6 +6,8 @@ import { useDiagramStore } from '@/store/useDiagramStore';
 import DiagramTypeSelector, { DIAGRAM_TYPES, DiagramType } from './DiagramTypeSelector';
 
 
+import GenerationLoadingScreen from './GenerationLoadingScreen';
+
 export default function CommandBar() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -166,7 +168,7 @@ export default function CommandBar() {
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error || errData.message || 'Failed to generate diagram. Please check your Gemini API key in .env.local');
+        throw new Error(errData.error || errData.message || 'Failed to generate diagram. Please check your API keys.');
       }
 
       const data = await response.json();
@@ -265,6 +267,8 @@ export default function CommandBar() {
 
   return (
     <>
+      <GenerationLoadingScreen isVisible={isGenerating} />
+
       {isEmpty && (
         <DiagramTypeSelector
           selectedType={selectedDiagramType?.id ?? null}

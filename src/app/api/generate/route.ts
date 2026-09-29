@@ -90,18 +90,31 @@ export async function POST(req: Request) {
     const systemPrompt = SYSTEM_PROMPTS[typeKey];
     const nodeType = NODE_TYPE_MAP[typeKey];
 
-    // Fallback model list in order of preference
-    const modelsToTry = [
+    // 1. Google Gemini (Primary)
+    const googleModels = [
       'gemini-3.8-flash',
       'gemini-3.5-flash',
       'gemini-2.5-flash',
       'gemini-pro-latest',
     ];
 
+    // 2. Groq (Fallback) - Fast models suitable for JSON schema generation
+    const groqModels = [
+      'llama-3.3-70b-versatile',
+      'llama-3.1-70b-versatile',
+      'mixtral-8x7b-32768',
+    ];
+
+    const fallbackKeys = [
+      process.env.GROQ_API_KEY_1,
+      process.env.GROQ_API_KEY_2
+    ].filter(Boolean) as string[];
+
     let result = null;
     let lastError: unknown = null;
 
-    for (const modelName of modelsToTry) {
+    // --- Phase 1: Try Gemini (Primary) ---
+    for (const modelName of googleModels) {
       try {
         result = await generateObject({
           model: google(modelName),
@@ -112,15 +125,61 @@ export async function POST(req: Request) {
         if (result?.object) break;
       } catch (err: any) {
         lastError = err;
-        console.warn(`Model '${modelName}' failed during generation: ${err?.message || 'Unknown error'}, trying next model fallback...`);
+        console.warn(`[Gemini] Model '${modelName}' failed: ${err?.message || 'Unknown error'}`);
+      }
+    }
+
+    // --- Phase 2: Try Groq (Fallback) if Gemini failed ---
+    if (!result?.object) {
+      console.warn('All Gemini attempts failed. Falling back to Groq models with backup keys...');
+      
+      for (const groqKey of fallbackKeys) {
+        for (const modelName of groqModels) {
+          try {
+            console.log(`Trying Groq model: ${modelName} with key starting with ${groqKey.substring(0, 8)}...`);
+            
+            const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${groqKey}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                model: modelName,
+                messages: [
+                  { role: 'system', content: systemPrompt },
+                  { role: 'user', content: prompt }
+                ],
+                response_format: { type: 'json_object' },
+                temperature: 0.2
+              })
+            });
+
+            if (groqResponse.ok) {
+              const data = await groqResponse.json();
+              const content = data.choices?.[0]?.message?.content;
+              if (content) {
+                result = { object: JSON.parse(content) };
+                break;
+              }
+            } else {
+              const errData = await groqResponse.json().catch(() => ({}));
+              console.warn(`[Groq] Model '${modelName}' failed:`, errData);
+            }
+          } catch (err: any) {
+            lastError = err;
+            console.warn(`[Groq] Model '${modelName}' failed: ${err?.message || 'Unknown error'}`);
+          }
+        }
+        if (result?.object) break; // Stop trying keys if we succeeded
       }
     }
 
     if (!result?.object) {
       const errMessage = lastError instanceof Error ? lastError.message : String(lastError);
-      console.error('All Gemini model generation attempts failed:', errMessage);
+      console.error('All generation attempts (Gemini & Groq) failed:', errMessage);
       return Response.json(
-        { error: `Generation failed: ${errMessage || 'Unable to connect to Google Gemini AI.'}` },
+        { error: `Generation failed: ${errMessage || 'Unable to connect to AI providers.'}` },
         { status: 500 }
       );
     }
